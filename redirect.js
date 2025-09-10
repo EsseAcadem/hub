@@ -1,9 +1,5 @@
 const pages = [
-    "https://sites.google.com/view/essentiaacademyhub",
-    "https://sites.google.com/view/essentiaacademyhub/guys-home?authuser=0",
-    "https://sites.google.com/view/essentiaacademyhub/rbh-home?authuser=0",
-    "https://sites.google.com/view/essentiaacademyhub/harefield-home?authuser=0",
-    "https://sites.google.com/view/essentiaacademyhub/gds-home?authuser=0"
+    "https://sites.google.com/view/essentiaacademyhub/essentia-academy-hub?read_current=1",
 ];
 
 const key = "rrCounter"; // storage key
