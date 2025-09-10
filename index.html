@@ -1,55 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Essentia Academy</title>
   <style>
-    html, body {
-      height: 100%;
+    body {
       margin: 0;
-      background: #ffffff; /* same white background */
-      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      font-family: Arial, sans-serif;
       text-align: center;
     }
     .wrap {
-      height: 100%;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .inner {
       opacity: 1;
-      transition: opacity 1s ease-out; /* 1s fade */
-      padding: 24px;
+      transition: opacity 1s ease-out;
+    }
+    .fade-out {
+      opacity: 0;
     }
     .logo {
       display: block;
       margin: 0 auto 20px;
     }
-    .fade-out { opacity: 0; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="inner" id="splash">
-      <img src="academy-logo.png" alt="Essentia Academy" class="logo" />
-      <img src="loader.gif" alt="Loading" />
+      <img src="academy-logo.png" alt="Essentia Academy" class="logo">
+      <img src="loader.gif" alt="Loading">
     </div>
   </div>
 
   <script>
-    // 5s delay -> 1s fade -> then run redirect.js
+    // 5s delay → 1s fade → then load redirect.js
     setTimeout(() => {
       const splash = document.getElementById('splash');
       splash.classList.add('fade-out');
       setTimeout(() => {
         const s = document.createElement('script');
-        s.src = 'redirect.js';
-        s.defer = true;
+        s.src = "redirect.js";
         document.body.appendChild(s);
-      }, 1000); // after fade
-    }, 5000); // initial wait
+      }, 1000);
+    }, 5000);
   </script>
 </body>
 </html>
