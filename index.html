@@ -1,54 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Essentia Academy</title>
+  <meta charset="UTF-8" />
+  <title>Redirecting...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       margin: 0;
-      background: #ffffff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-    .wrap {
-      height: 100vh;
+      background: #1c273a; /* ← updated hex */
+      color: white;
+      font-family: "Segoe UI", sans-serif;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-    }
-    .inner {
+      height: 100vh;
+      text-align: center;
       opacity: 1;
-      transition: opacity 1s ease-out;
+      transition: opacity 1s ease;
     }
-    .fade-out {
-      opacity: 0;
+
+    img.logo {
+      width: 200px;
+      max-width: 80%;
+      margin-bottom: 40px;
     }
-    .logo {
-      display: block;
-      margin: 0 auto 20px;
+
+    img.loader {
+      width: 80px;
+      height: auto;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="inner" id="splash">
-      <img src="academy-logo.png" alt="Essentia Academy" class="logo">
-      <img src="loader.gif" alt="Loading">
-    </div>
-  </div>
+  <img class="logo" src="academy-logo.png" alt="Essentia Academy Logo" />
+  <img class="loader" src="loader.gif" alt="Loading..." />
 
   <script>
-    // 5s delay → 1s fade → then load redirect.js
+    // Wait 5 seconds, then fade out
     setTimeout(() => {
-      const splash = document.getElementById('splash');
-      splash.classList.add('fade-out');
+      document.body.style.opacity = '0';
+
+      // After fade completes, load redirect.js
       setTimeout(() => {
-        const s = document.createElement('script');
-        s.src = "redirect.js";
-        document.body.appendChild(s);
-      }, 1000);
-    }, 5000);
+        const script = document.createElement('script');
+        script.src = 'redirect.js';
+        document.body.appendChild(script);
+      }, 1000); // 1s fade duration
+    }, 3000); // 5s delay before fade
   </script>
 </body>
 </html>
