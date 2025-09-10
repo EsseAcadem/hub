@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Essentia Academy QR</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff;
+      text-align: center;
+    }
+    .logo {
+      margin-top: 120px;
+      width: 220px;
+    }
+    .fade-out {
+      opacity: 0;
+      transition: opacity 1s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <!-- Replace the logo.png with your logo path if needed -->
+  <img src="logo.png" alt="Essentia Academy" class="logo" id="logo">
+
+  <script>
+    // Wait 3 seconds before fade and redirect
+    setTimeout(() => {
+      document.getElementById('logo').classList.add('fade-out');
+      setTimeout(() => {
+        // Load redirect logic
+        const script = document.createElement('script');
+        script.src = "redirect.js";
+        document.body.appendChild(script);
+      }, 1000); // 1s fade
+    }, 3000); // 3s delay
+  </script>
+</body>
+</html>
