@@ -21,7 +21,8 @@
       --shadow: 0 10px 30px rgba(0,0,0,.35);
     }
 
-    @media (prefers-color-scheme: light) {$1--tile-2:#fafbff; --text:#0b1430; --text-dim:#3a3f63; }
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #f7f8fc; --bg-2:#eef1fb; --tile:#ffffff; --tile-2:#fafbff; --text:#0b1430; --text-dim:#3a3f63; }
       body { background: linear-gradient(180deg, #eef1fb, #ffffff 18% 100%) fixed; }
     }
 
@@ -54,12 +55,11 @@
       border: 1px solid rgba(255,255,255,.08);
     }
     .logo {
-      width: 140px; height: 140px; margin: 0 auto 16px; display: grid; place-items: center;
-      border-radius: 32px; background: rgba(255,255,255,.06);
-      position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,.08);
+      width: min(70vw, 220px); height: min(70vw, 220px); margin: 0 auto 8px; display: grid; place-items: center;
+      border-radius: 32px; background: transparent; position: relative; overflow: visible; border: none;
     }
-    .logo::after{ content:""; position:absolute; inset:10px; border-radius:26px; background:rgba(255,255,255,.05);} 
-    .logo-img { width: 70%; height: 70%; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,.4)); }
+    .logo::after{ content:""; display:none; } 
+    .logo-img { width: 80%; height: 80%; object-fit: contain; }
     h1 { font-weight: 700; letter-spacing: .2px; margin: 6px 0 8px; }
     .tagline { color: var(--text-dim); margin: 0 0 18px; }
     .tap {
@@ -138,7 +138,7 @@
     @keyframes ripple { from { width: 0; height: 0; opacity: .7; } to { width: 360px; height: 360px; opacity: 0; } }
 
     /* Appear animation for tiles */
-    .tile { opacity: 0; transform: translateY(8px) scale(.98); }
+    .tile { opacity: 0; transform: translateX(12px) skewX(-3deg) scale(.98); }
     .app.ready .tile { animation: metroIn .55s both; }
     .app.ready .tile:nth-child(1) { animation-delay: .05s; }
     .app.ready .tile:nth-child(2) { animation-delay: .1s; }
@@ -148,7 +148,7 @@
     .app.ready .tile:nth-child(6) { animation-delay: .3s; }
     .app.ready .tile:nth-child(7) { animation-delay: .35s; }
     .app.ready .tile:nth-child(8) { animation-delay: .4s; }
-    @keyframes metroIn { from { opacity: 0; transform: translateX(24px) skewX(-6deg) scale(.98); } to { opacity: 1; transform: translateX(0) skewX(0) scale(1);} } }
+    @keyframes metroIn { from { opacity: 0; transform: translateX(24px) skewX(-6deg) scale(.98); } to { opacity: 1; transform: translateX(0) skewX(0) scale(1);} }
 
     /* Tap leave: fold + swipe right */
     .tile.leaving { pointer-events: none; animation: metroLeave .45s cubic-bezier(.2,.8,.2,1) both; }
@@ -174,13 +174,12 @@
       <div class="logo" aria-hidden="true">
         <img src="academy-logo.png" alt="Essentia Academy logo" class="logo-img" />
       </div>
-      <h1 id="appTitle">Essentia Academy</h1>
-      <p class="tagline" id="appTagline">Tap to start</p>
+            <p class="tagline" id="appTagline">Tap to start</p>
       <button class="tap" id="tapStart" aria-label="Tap to start">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a5 5 0 00-5 5v3.126a2 2 0 00-1 .874l-1.5 2.5a2 2 0 103.464 2.052L8 13.874V7a4 4 0 118 0v6.382l1.036-.691a2 2 0 112.2 3.332l-3.9 2.6A5 5 0 0112 20H9a3 3 0 110-6h.5"/></svg>
-        <span>Start</span>
+        <span>Tap to start</span>
       </button>
-      <div class="hint">Works with touch, mouse, keyboard.</div>
+      
     </div>
   </section>
 
@@ -258,22 +257,27 @@
     const search = $('#searchInput');
 
     // Start: hide splash, show app
+    let started = false;
     function startApp(){
+      if (started) return;
+      started = true;
       splash.classList.add('hidden');
       app.classList.add('ready');
       app.setAttribute('aria-busy','false');
-      // focus grid for keyboard users
       setTimeout(()=> tiles.focus({preventScroll:true}), 350);
     }
 
-    // Allow any click/tap/Space/Enter on splash to start
-    ['click','pointerup'].forEach(ev => splash.addEventListener(ev, e=>{
-      if (e.target.closest('#tapStart') || e.target.closest('.splash__card')) {
-        // Only start if they clicked the button or card
+    // Start on any tap/click within splash or on the button
+    splash.addEventListener('click', startApp);
+    tapBtn.addEventListener('click', startApp);
+
+    // Keyboard fallback (Enter/Space)
+    document.addEventListener('keydown', e=>{
+      if ((e.key==='Enter' || e.key===' ') && !started) {
+        e.preventDefault();
+        startApp();
       }
-      startApp();
-    }, { once: true }));
-    tapBtn.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); startApp(); } }, { once: true });
+    });
 
     // Ripple effect on tiles
     function addRipple(e, el){
@@ -302,7 +306,6 @@
         }
       });
       t.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); addRipple(e, t); t.click(); } });
-    });
     });
 
     // Simple tile search/filter
