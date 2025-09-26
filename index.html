@@ -1,53 +1,312 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Redirecting...</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1430" />
+  <title>Essentia Academy — Touch Start</title>
   <style>
+    :root {
+      --bg: #0b1430;              /* deep navy from DT&I brochure */
+      --bg-2: #0e1a3f;
+      --tile: #1c2b5e;            /* tile base */
+      --tile-2: #23356f;
+      --accent: #5865f2;          /* soft purple-blue */
+      --accent-2: #7a88ff;
+      --text: #f6f7fb;
+      --text-dim: #cbd2ff;
+      --ok: #3bb273;
+      --warn: #f0b429;
+      --danger: #e84a5f;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #f7f8fc; --bg-2:#eef1fb; --tile:#ffffff; --tile-2:#f3f5ff; --text:#0b1430; --text-dim:#3a3f63; }
+      body { background: linear-gradient(180deg, #eef1fb, #ffffff 18% 100%) fixed; }
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body {
       margin: 0;
-      background: #1c273a; /* ← updated hex */
-      color: white;
-      font-family: "Segoe UI", sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      font-family: "Segoe UI", -apple-system, system-ui, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1200px 800px at 70% -10%, rgba(88,101,242,.35), transparent 60%),
+                  radial-gradient(900px 600px at -10% 90%, rgba(122,136,255,.25), transparent 60%),
+                  linear-gradient(180deg, var(--bg), var(--bg-2) 80% 100%);
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    /* ========== SPLASH ========== */
+    .splash {
+      position: fixed; inset: 0; display: grid; place-items: center; z-index: 50; background: transparent;
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .splash__card {
+      width: min(92vw, 560px);
+      padding: 48px 36px;
+      border-radius: 28px;
+      background: rgba(12, 20, 48, .75);
+      backdrop-filter: blur(10px) saturate(130%);
+      box-shadow: var(--shadow);
       text-align: center;
-      opacity: 1;
-      transition: opacity 1s ease;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .logo {
+      width: 140px; height: 140px; margin: 0 auto 16px; display: grid; place-items: center;
+      border-radius: 32px; background:
+        conic-gradient(from 200deg, rgba(122,136,255,.9), rgba(88,101,242,.9), rgba(11,20,48,.9));
+      position: relative; overflow: hidden;
+    }
+    .logo::after{
+      content:""; position:absolute; inset:6px; border-radius:26px; background:rgba(255,255,255,.08);
+    }
+    .logo svg { width: 70%; height: 70%; }
+    h1 { font-weight: 700; letter-spacing: .2px; margin: 6px 0 8px; }
+    .tagline { color: var(--text-dim); margin: 0 0 18px; }
+    .tap {
+      display: inline-flex; align-items: center; gap: 10px; font-weight: 600; padding: 12px 18px; border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2)); box-shadow: var(--shadow); cursor: pointer;
+      border: none; color: white; font-size: 1rem;
+      transition: transform .15s ease;
+    }
+    .tap:active { transform: scale(.98); }
+    .hint { margin-top: 12px; font-size: .9rem; color: var(--text-dim); }
+
+    .splash.hidden { opacity: 0; transform: translateY(-10px); pointer-events: none; }
+
+    /* ========== APP ========== */
+    .app { min-height: 100dvh; display: grid; grid-template-rows: auto 1fr; opacity: 0; }
+    .app.ready { opacity: 1; transition: opacity .5s ease .2s; }
+
+    header.topbar {
+      display: flex; align-items: center; gap: 12px; padding: 14px 18px; position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(8px) saturate(150%);
+      background: linear-gradient(180deg, rgba(12,20,48,.75), rgba(12,20,48,.55));
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .brand { font-size: 1.05rem; font-weight: 700; letter-spacing: .3px; }
+    .search {
+      margin-left: auto; min-width: 140px; flex: 1 1 320px; position: relative;
+    }
+    .search input {
+      width: 100%; padding: 10px 14px 10px 38px; border-radius: 999px; border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.07); color: var(--text);
+    }
+    .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: .6; }
+
+    /* Metro grid */
+    .tiles {
+      --gap: 14px;
+      padding: 18px; display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--gap);
+    }
+    @media (max-width: 1200px) { .tiles { grid-template-columns: repeat(4, 1fr);} }
+    @media (max-width: 800px)  { .tiles { grid-template-columns: repeat(3, 1fr);} }
+    @media (max-width: 560px)  { .tiles { grid-template-columns: repeat(2, 1fr);} }
+
+    .tile {
+      position: relative; min-height: 120px; background: var(--tile); border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,.08);
+      box-shadow: var(--shadow); cursor: pointer; transition: transform .15s ease, box-shadow .2s ease;
+      outline: none; color: inherit; text-decoration: none; display: flex; flex-direction: column; padding: 14px;
+      user-select: none;
+    }
+    .tile:hover { transform: translateY(-2px); }
+    .tile:focus-visible { box-shadow: 0 0 0 3px rgba(122,136,255,.55), var(--shadow); }
+
+    .tile--wide  { grid-column: span 2; }
+    .tile--tall  { grid-row: span 2; }
+    .tile--big   { grid-column: span 2; grid-row: span 2; min-height: 260px; }
+
+    .tile__title { font-weight: 700; margin-bottom: 6px; }
+    .tile__meta  { font-size: .9rem; opacity: .8; }
+
+    /* Live tile animation */
+    .flip {
+      perspective: 1000px; position: relative; flex: 1; display: grid; place-items: center; overflow: hidden; border-radius: 10px;
+      background: linear-gradient(180deg, var(--tile-2), transparent);
+    }
+    .flip__inner { position: absolute; inset: 0; transform-style: preserve-3d; animation: flip 8s infinite;
+      display: grid; place-items: center; font-size: 2.2rem; font-weight: 800; letter-spacing: .5px; }
+    .flip__face { position:absolute; inset:0; display:grid; place-items:center; backface-visibility: hidden; }
+    .flip__back { transform: rotateY(180deg); }
+    @keyframes flip { 0%,45% { transform: rotateY(0) } 55%,100% { transform: rotateY(180deg) } }
+
+    /* Ripple */
+    .ripple {
+      position: absolute; border-radius: 999px; pointer-events: none; transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(255,255,255,.35), rgba(255,255,255,0) 60%);
+      animation: ripple .7s ease-out forwards;
+    }
+    @keyframes ripple { from { width: 0; height: 0; opacity: .7; } to { width: 360px; height: 360px; opacity: 0; } }
+
+    /* Appear animation for tiles */
+    .tile { opacity: 0; transform: translateY(8px) scale(.98); }
+    .app.ready .tile { animation: in .5s both; }
+    .app.ready .tile:nth-child(1) { animation-delay: .05s; }
+    .app.ready .tile:nth-child(2) { animation-delay: .1s; }
+    .app.ready .tile:nth-child(3) { animation-delay: .15s; }
+    .app.ready .tile:nth-child(4) { animation-delay: .2s; }
+    .app.ready .tile:nth-child(5) { animation-delay: .25s; }
+    .app.ready .tile:nth-child(6) { animation-delay: .3s; }
+    .app.ready .tile:nth-child(7) { animation-delay: .35s; }
+    .app.ready .tile:nth-child(8) { animation-delay: .4s; }
+    @keyframes in { to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      .flip__inner { animation: none; }
+      .tile, .splash { transition: none !important; }
+      .app.ready .tile { animation: none; opacity: 1; transform: none; }
+      .ripple { display: none; }
     }
 
-    img.logo {
-      width: 200px;
-      max-width: 80%;
-      margin-bottom: 40px;
-    }
-
-    img.loader {
-      width: 80px;
-      height: auto;
-    }
+    /* Footer */
+    footer { color: var(--text-dim); font-size: .85rem; padding: 10px 18px 24px; text-align: center; }
   </style>
 </head>
 <body>
-  <img class="logo" src="academy-logo.png" alt="Essentia Academy Logo" />
-  <img class="loader" src="loader.gif" alt="Loading..." />
+  <!-- SPLASH / TAP TO START -->
+  <section class="splash" id="splash" aria-label="Splash screen">
+    <div class="splash__card" role="dialog" aria-modal="true" aria-labelledby="appTitle" aria-describedby="appTagline">
+      <div class="logo" aria-hidden="true">
+        <!-- Placeholder logo mark (replace with your actual SVG if needed) -->
+        <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <rect x="18" y="18" width="64" height="64" rx="14" fill="rgba(255,255,255,.14)" />
+          <path d="M25 65 L42 35 L52 52 L62 44 L75 65" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1 id="appTitle">Essentia Academy</h1>
+      <p class="tagline" id="appTagline">Tap to start</p>
+      <button class="tap" id="tapStart" aria-label="Tap to start">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a5 5 0 00-5 5v3.126a2 2 0 00-1 .874l-1.5 2.5a2 2 0 103.464 2.052L8 13.874V7a4 4 0 118 0v6.382l1.036-.691a2 2 0 112.2 3.332l-3.9 2.6A5 5 0 0112 20H9a3 3 0 110-6h.5"/></svg>
+        <span>Start</span>
+      </button>
+      <div class="hint">Works with touch, mouse, keyboard.</div>
+    </div>
+  </section>
+
+  <!-- APP CHROME -->
+  <div class="app" id="app" aria-live="polite" aria-busy="true">
+    <header class="topbar">
+      <div class="brand">Essentia Academy</div>
+      <div class="search" role="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1016 15.5l.27.28v.79L21 21.5 19.5 23l-4.5-4.5v-.79l-.27-.28zM10 15a5 5 0 110-10 5 5 0 010 10z"/></svg>
+        <input id="searchInput" type="search" placeholder="Search tiles" aria-label="Search tiles" />
+      </div>
+    </header>
+
+    <!-- METRO GRID -->
+    <main class="tiles" id="tiles" tabindex="-1">
+      <!-- Big live tile -->
+      <a class="tile tile--big" href="#" role="button" aria-label="Courses">
+        <div class="tile__title">Courses</div>
+        <div class="flip" aria-hidden="true">
+          <div class="flip__inner">
+            <div class="flip__face">📚</div>
+            <div class="flip__face flip__back">🎓</div>
+          </div>
+        </div>
+        <div class="tile__meta">Browse & book training</div>
+      </a>
+
+      <a class="tile tile--wide" href="#" role="button" aria-label="Apprenticeships">
+        <div class="tile__title">Apprenticeships</div>
+        <div class="tile__meta">Routes, levels, guidance</div>
+      </a>
+
+      <a class="tile" href="#" role="button" aria-label="Calendar">
+        <div class="tile__title">Calendar</div>
+        <div class="tile__meta">Sessions & key dates</div>
+      </a>
+
+      <a class="tile tile--tall" href="#" role="button" aria-label="Check-in">
+        <div class="tile__title">Check-in</div>
+        <div class="tile__meta">QR attendance</div>
+      </a>
+
+      <a class="tile tile--wide" href="#" role="button" aria-label="Guides">
+        <div class="tile__title">Guides</div>
+        <div class="tile__meta">How-to & templates</div>
+      </a>
+
+      <a class="tile" href="#" role="button" aria-label="Providers">
+        <div class="tile__title">Providers</div>
+        <div class="tile__meta">Contacts & SLAs</div>
+      </a>
+
+      <a class="tile" href="#" role="button" aria-label="Support">
+        <div class="tile__title">Support</div>
+        <div class="tile__meta">Ask the Academy</div>
+      </a>
+
+      <a class="tile" href="#" role="button" aria-label="About">
+        <div class="tile__title">About</div>
+        <div class="tile__meta">Essentia Academy</div>
+      </a>
+    </main>
+
+    <footer>DT&I Essentia Academy • Windows&nbsp;Phone‑style prototype</footer>
+  </div>
 
   <script>
-    // Wait 5 seconds, then fade out
-    setTimeout(() => {
-      document.body.style.opacity = '0';
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
-      // After fade completes, load redirect.js
-      setTimeout(() => {
-        const script = document.createElement('script');
-        script.src = 'redirect.js';
-        document.body.appendChild(script);
-      }, 1000); // 1s fade duration
-    }, 3000); // 5s delay before fade
+    const splash = $('#splash');
+    const app    = $('#app');
+    const tiles  = $('#tiles');
+    const tapBtn = $('#tapStart');
+    const search = $('#searchInput');
+
+    // Start: hide splash, show app
+    function startApp(){
+      splash.classList.add('hidden');
+      app.classList.add('ready');
+      app.setAttribute('aria-busy','false');
+      // focus grid for keyboard users
+      setTimeout(()=> tiles.focus({preventScroll:true}), 350);
+    }
+
+    // Allow any click/tap/Space/Enter on splash to start
+    ['click','pointerup'].forEach(ev => splash.addEventListener(ev, e=>{
+      if (e.target.closest('#tapStart') || e.target.closest('.splash__card')) {
+        // Only start if they clicked the button or card
+      }
+      startApp();
+    }, { once: true }));
+    tapBtn.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); startApp(); } }, { once: true });
+
+    // Ripple effect on tiles
+    function addRipple(e, el){
+      const rect = el.getBoundingClientRect();
+      const x = (e.clientX ?? (rect.left + rect.width/2)) - rect.left;
+      const y = (e.clientY ?? (rect.top + rect.height/2)) - rect.top;
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      r.style.left = x + 'px';
+      r.style.top  = y + 'px';
+      el.appendChild(r);
+      r.addEventListener('animationend', ()=> r.remove());
+    }
+
+    $$('.tile').forEach(t => {
+      t.addEventListener('pointerdown', e => addRipple(e, t));
+      t.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); addRipple(e, t); t.click(); } });
+    });
+
+    // Simple tile search/filter
+    search.addEventListener('input', () => {
+      const q = search.value.trim().toLowerCase();
+      $$('.tile').forEach(t => {
+        const text = (t.textContent || '').toLowerCase();
+        t.style.display = text.includes(q) ? '' : 'none';
+      });
+    });
+
+    // Prevent scroll bounce on iOS when tapping rapidly
+    document.addEventListener('gesturestart', e => e.preventDefault());
   </script>
 </body>
 </html>
