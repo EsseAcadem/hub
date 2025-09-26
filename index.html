@@ -9,8 +9,8 @@
     :root {
       --bg: #0b1430;              /* deep navy from DT&I brochure */
       --bg-2: #0e1a3f;
-      --tile: #1c2b5e;            /* tile base */
-      --tile-2: #23356f;
+      --tile: rgba(255,255,255,.14);            /* tile base */
+      --tile-2: rgba(255,255,255,.22);
       --accent: #5865f2;          /* soft purple-blue */
       --accent-2: #7a88ff;
       --text: #f6f7fb;
@@ -21,8 +21,7 @@
       --shadow: 0 10px 30px rgba(0,0,0,.35);
     }
 
-    @media (prefers-color-scheme: light) {
-      :root { --bg: #f7f8fc; --bg-2:#eef1fb; --tile:#ffffff; --tile-2:#f3f5ff; --text:#0b1430; --text-dim:#3a3f63; }
+    @media (prefers-color-scheme: light) {$1--tile-2:#fafbff; --text:#0b1430; --text-dim:#3a3f63; }
       body { background: linear-gradient(180deg, #eef1fb, #ffffff 18% 100%) fixed; }
     }
 
@@ -56,14 +55,11 @@
     }
     .logo {
       width: 140px; height: 140px; margin: 0 auto 16px; display: grid; place-items: center;
-      border-radius: 32px; background:
-        conic-gradient(from 200deg, rgba(122,136,255,.9), rgba(88,101,242,.9), rgba(11,20,48,.9));
-      position: relative; overflow: hidden;
+      border-radius: 32px; background: rgba(255,255,255,.06);
+      position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,.08);
     }
-    .logo::after{
-      content:""; position:absolute; inset:6px; border-radius:26px; background:rgba(255,255,255,.08);
-    }
-    .logo svg { width: 70%; height: 70%; }
+    .logo::after{ content:""; position:absolute; inset:10px; border-radius:26px; background:rgba(255,255,255,.05);} 
+    .logo-img { width: 70%; height: 70%; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,.4)); }
     h1 { font-weight: 700; letter-spacing: .2px; margin: 6px 0 8px; }
     .tagline { color: var(--text-dim); margin: 0 0 18px; }
     .tap {
@@ -107,10 +103,10 @@
     @media (max-width: 560px)  { .tiles { grid-template-columns: repeat(2, 1fr);} }
 
     .tile {
-      position: relative; min-height: 120px; background: var(--tile); border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,.08);
-      box-shadow: var(--shadow); cursor: pointer; transition: transform .15s ease, box-shadow .2s ease;
+      position: relative; min-height: 120px; background: var(--tile); border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,.16);
+      box-shadow: var(--shadow); cursor: pointer; transition: transform .15s ease, box-shadow .2s ease, opacity .3s ease;
       outline: none; color: inherit; text-decoration: none; display: flex; flex-direction: column; padding: 14px;
-      user-select: none;
+      user-select: none; backdrop-filter: saturate(130%) blur(2px);
     }
     .tile:hover { transform: translateY(-2px); }
     .tile:focus-visible { box-shadow: 0 0 0 3px rgba(122,136,255,.55), var(--shadow); }
@@ -143,7 +139,7 @@
 
     /* Appear animation for tiles */
     .tile { opacity: 0; transform: translateY(8px) scale(.98); }
-    .app.ready .tile { animation: in .5s both; }
+    .app.ready .tile { animation: metroIn .55s both; }
     .app.ready .tile:nth-child(1) { animation-delay: .05s; }
     .app.ready .tile:nth-child(2) { animation-delay: .1s; }
     .app.ready .tile:nth-child(3) { animation-delay: .15s; }
@@ -152,7 +148,12 @@
     .app.ready .tile:nth-child(6) { animation-delay: .3s; }
     .app.ready .tile:nth-child(7) { animation-delay: .35s; }
     .app.ready .tile:nth-child(8) { animation-delay: .4s; }
-    @keyframes in { to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes metroIn { from { opacity: 0; transform: translateX(24px) skewX(-6deg) scale(.98); } to { opacity: 1; transform: translateX(0) skewX(0) scale(1);} } }
+
+    /* Tap leave: fold + swipe right */
+    .tile.leaving { pointer-events: none; animation: metroLeave .45s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes metroLeave { from { opacity: 1; transform: rotateY(0deg) translateX(0) skewX(0); }
+      to { opacity: 0; transform: rotateY(-14deg) translateX(80px) skewX(-6deg); } }
 
     /* Reduce motion */
     @media (prefers-reduced-motion: reduce) {
@@ -171,11 +172,7 @@
   <section class="splash" id="splash" aria-label="Splash screen">
     <div class="splash__card" role="dialog" aria-modal="true" aria-labelledby="appTitle" aria-describedby="appTagline">
       <div class="logo" aria-hidden="true">
-        <!-- Placeholder logo mark (replace with your actual SVG if needed) -->
-        <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
-          <rect x="18" y="18" width="64" height="64" rx="14" fill="rgba(255,255,255,.14)" />
-          <path d="M25 65 L42 35 L52 52 L62 44 L75 65" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <img src="academy-logo.png" alt="Essentia Academy logo" class="logo-img" />
       </div>
       <h1 id="appTitle">Essentia Academy</h1>
       <p class="tagline" id="appTagline">Tap to start</p>
@@ -293,7 +290,19 @@
 
     $$('.tile').forEach(t => {
       t.addEventListener('pointerdown', e => addRipple(e, t));
+      t.addEventListener('click', e => {
+        // Metro-style leave animation then follow link
+        if (!t.classList.contains('leaving')) {
+          e.preventDefault();
+          t.classList.add('leaving');
+          setTimeout(() => {
+            const href = t.getAttribute('href');
+            if (href && href !== '#') location.href = href; else t.classList.remove('leaving');
+          }, 430);
+        }
+      });
       t.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); addRipple(e, t); t.click(); } });
+    });
     });
 
     // Simple tile search/filter
