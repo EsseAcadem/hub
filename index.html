@@ -3,322 +3,200 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b1430" />
-  <title>Essentia Academy — Touch Start</title>
+  <title>Essentia Academy — Start</title>
+  <meta name="theme-color" content="#007070" />
   <style>
-    :root {
-      --bg: #0b1430;              /* deep navy from DT&I brochure */
-      --bg-2: #0e1a3f;
-      --tile: rgba(255,255,255,.14);            /* tile base */
-      --tile-2: rgba(255,255,255,.22);
-      --accent: #5865f2;          /* soft purple-blue */
-      --accent-2: #7a88ff;
-      --text: #f6f7fb;
-      --text-dim: #cbd2ff;
-      --ok: #3bb273;
-      --warn: #f0b429;
-      --danger: #e84a5f;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    :root{
+      --bg: #0f6a7a;           /* Win8 teal vibe */
+      --bg2:#0a5561;
+      --text: #f5f8fb;
+      --muted:#d7e7eb;
+      --tile-blue:#2d89ef;
+      --tile-green:#00a300;
+      --tile-purple:#7e3878;
+      --tile-orange:#da532c;
+      --tile-pink:#e671b8;
+      --tile-cyan:#00aba9;
+      --shadow: 0 14px 30px rgba(0,0,0,.25);
+      --gap: 12px;
+      --unit: 120px;           /* base tile size */
     }
 
-    @media (prefers-color-scheme: light) {
-      :root { --bg: #f7f8fc; --bg-2:#eef1fb; --tile:#ffffff; --tile-2:#fafbff; --text:#0b1430; --text-dim:#3a3f63; }
-      body { background: linear-gradient(180deg, #eef1fb, #ffffff 18% 100%) fixed; }
-    }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: "Segoe UI", -apple-system, system-ui, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-      color: var(--text);
-      background: radial-gradient(1200px 800px at 70% -10%, rgba(88,101,242,.35), transparent 60%),
-                  radial-gradient(900px 600px at -10% 90%, rgba(122,136,255,.25), transparent 60%),
-                  linear-gradient(180deg, var(--bg), var(--bg-2) 80% 100%);
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text); font-family:"Segoe UI", -apple-system, system-ui, Roboto, Arial;
+      background:
+        radial-gradient(900px 600px at 80% -10%, rgba(255,255,255,.06), transparent 60%),
+        radial-gradient(700px 500px at -10% 90%, rgba(255,255,255,.05), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      overflow:hidden; /* keep to one screen */
       -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
+    }
+    /* subtle Win8 swirl overlay */
+    body::after{
+      content:""; position:fixed; inset:0; pointer-events:none; opacity:.18; mix-blend:overlay;
+      background:url('data:image/svg+xml;utf8,\
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">\
+          <defs><path id="s" d="M0 0c120 40 180 160 300 180s220-60 320 0" fill="none" stroke="%23ffffff" stroke-width="8" opacity=".3"/></defs>\
+          <use href="#s"/>\
+          <use href="#s" transform="translate(-60 160) scale(1.1)"/>\
+          <use href="#s" transform="translate(0 320) scale(.9)"/>\
+        </svg>') center/cover no-repeat;
     }
 
-    /* ========== SPLASH ========== */
-    .splash {
-      position: fixed; inset: 0; display: grid; place-items: center; z-index: 50; background: transparent;
-      transition: opacity .7s ease, transform .7s ease;
+    .wrap{display:grid; grid-template-rows:auto 1fr; height:100dvh}
+
+    header{
+      display:flex; align-items:center; gap:16px; padding:18px 20px 8px; user-select:none;
     }
-    .splash__card {
-      width: min(92vw, 560px);
-      padding: 48px 36px;
-      border-radius: 28px;
-      background: rgba(12, 20, 48, .75);
-      backdrop-filter: blur(10px) saturate(130%);
-      box-shadow: var(--shadow);
-      text-align: center;
-      border: 1px solid rgba(255,255,255,.08);
+    .brand{display:flex; align-items:center; gap:12px}
+    .brand img{height:40px; width:auto; display:block}
+    .brand .title{font-weight:800; letter-spacing:.4px; font-size:1.25rem}
+
+    .grid{
+      padding:12px 20px 20px; height:calc(100dvh - 66px); /* header height approx */
+      display:grid; grid-auto-flow:dense; gap:var(--gap);
+      grid-template-columns: repeat(8, var(--unit));
+      grid-auto-rows: var(--unit);
+      overflow:hidden; /* no scrollbars */
+      align-content:start;
     }
-    .logo {
-      width: min(70vw, 220px); height: min(70vw, 220px); margin: 0 auto 8px; display: grid; place-items: center;
-      border-radius: 32px; background: transparent; position: relative; overflow: visible; border: none;
+    @media (max-width: 1200px){ .grid{ grid-template-columns: repeat(6, var(--unit)); } }
+    @media (max-width: 960px){  .grid{ grid-template-columns: repeat(5, var(--unit)); } }
+    @media (max-width: 780px){  .grid{ grid-template-columns: repeat(4, var(--unit)); } }
+    @media (max-width: 620px){  .grid{ grid-template-columns: repeat(3, var(--unit)); } }
+
+    .tile{
+      border-radius:4px; box-shadow:var(--shadow); padding:10px; display:flex; flex-direction:column; gap:6px;
+      color:white; text-decoration:none; position:relative; overflow:hidden; outline:none;
+      transform: translateZ(0); /* enable GPU */
+      transition: transform .1s ease;
     }
-    .logo::after{ content:""; display:none; } 
-    .logo-img { width: 80%; height: 80%; object-fit: contain; }
-    h1 { font-weight: 700; letter-spacing: .2px; margin: 6px 0 8px; }
-    .tagline { color: var(--text-dim); margin: 0 0 18px; }
-    .tap {
-      display: inline-flex; align-items: center; gap: 10px; font-weight: 600; padding: 12px 18px; border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2)); box-shadow: var(--shadow); cursor: pointer;
-      border: none; color: white; font-size: 1rem;
-      transition: transform .15s ease;
-    }
-    .tap:active { transform: scale(.98); }
-    .hint { margin-top: 12px; font-size: .9rem; color: var(--text-dim); }
+    .tile:focus-visible{outline:3px solid rgba(255,255,255,.6)}
+    .tile:active{ transform: scale(.98) }
 
-    .splash.hidden { opacity: 0; transform: translateY(-10px); pointer-events: none; }
+    .size-1x1{ grid-column: span 1; grid-row: span 1; min-width: var(--unit); }
+    .size-2x1{ grid-column: span 2; grid-row: span 1; }
+    .size-2x2{ grid-column: span 2; grid-row: span 2; }
+    .size-4x2{ grid-column: span 4; grid-row: span 2; }
 
-    /* ========== APP ========== */
-    .app { min-height: 100dvh; display: grid; grid-template-rows: auto 1fr; opacity: 0; }
-    .app.ready { opacity: 1; transition: opacity .5s ease .2s; }
+    .tile .label{ margin-top:auto; font-weight:700; opacity:.95; }
+    .icon{ font-size:28px; line-height:1 }
 
-    header.topbar {
-      display: flex; align-items: center; gap: 12px; padding: 14px 18px; position: sticky; top: 0; z-index: 10;
-      backdrop-filter: blur(8px) saturate(150%);
-      background: linear-gradient(180deg, rgba(12,20,48,.75), rgba(12,20,48,.55));
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-    .brand { font-size: 1.05rem; font-weight: 700; letter-spacing: .3px; }
-    .search {
-      margin-left: auto; min-width: 140px; flex: 1 1 320px; position: relative;
-    }
-    .search input {
-      width: 100%; padding: 10px 14px 10px 38px; border-radius: 999px; border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.07); color: var(--text);
-    }
-    .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: .6; }
+    /* specific tiles */
+    .time{ background:var(--tile-purple); display:flex; align-items:flex-start; justify-content:space-between; }
+    .time .clock{ font-size:52px; font-weight:800; letter-spacing:.5px; }
+    .time .date{ font-size:14px; opacity:.9; }
 
-    /* Metro grid */
-    .tiles {
-      --gap: 14px;
-      padding: 18px; display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--gap);
-    }
-    @media (max-width: 1200px) { .tiles { grid-template-columns: repeat(4, 1fr);} }
-    @media (max-width: 800px)  { .tiles { grid-template-columns: repeat(3, 1fr);} }
-    @media (max-width: 560px)  { .tiles { grid-template-columns: repeat(2, 1fr);} }
+    .weather{ background:var(--tile-blue); }
+    .weather .temp{ font-size:36px; font-weight:800 }
+    .weather .cond{ font-size:14px; opacity:.9 }
 
-    .tile {
-      position: relative; min-height: 120px; background: var(--tile); border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,.16);
-      box-shadow: var(--shadow); cursor: pointer; transition: transform .15s ease, box-shadow .2s ease, opacity .3s ease;
-      outline: none; color: inherit; text-decoration: none; display: flex; flex-direction: column; padding: 14px;
-      user-select: none; backdrop-filter: saturate(130%) blur(2px);
-    }
-    .tile:hover { transform: translateY(-2px); }
-    .tile:focus-visible { box-shadow: 0 0 0 3px rgba(122,136,255,.55), var(--shadow); }
+    .mail{ background:var(--tile-orange); }
+    .calendar{ background:var(--tile-green); }
+    .people{ background:var(--tile-pink); }
+    .photos{ background:var(--tile-cyan); }
 
-    .tile--wide  { grid-column: span 2; }
-    .tile--tall  { grid-row: span 2; }
-    .tile--big   { grid-column: span 2; grid-row: span 2; min-height: 260px; }
+    /* tile intro like Metro */
+    .grid .tile{ opacity:0; transform: translateX(12px) skewX(-4deg) }
+    .grid.ready .tile{ animation: enter .5s both; }
+    .grid.ready .tile:nth-child(1){ animation-delay:.05s }
+    .grid.ready .tile:nth-child(2){ animation-delay:.1s }
+    .grid.ready .tile:nth-child(3){ animation-delay:.15s }
+    .grid.ready .tile:nth-child(4){ animation-delay:.2s }
+    .grid.ready .tile:nth-child(5){ animation-delay:.25s }
+    .grid.ready .tile:nth-child(6){ animation-delay:.3s }
+    .grid.ready .tile:nth-child(7){ animation-delay:.35s }
+    .grid.ready .tile:nth-child(8){ animation-delay:.4s }
+    @keyframes enter{ to{ opacity:1; transform:none } }
 
-    .tile__title { font-weight: 700; margin-bottom: 6px; }
-    .tile__meta  { font-size: .9rem; opacity: .8; }
-
-    /* Live tile animation */
-    .flip {
-      perspective: 1000px; position: relative; flex: 1; display: grid; place-items: center; overflow: hidden; border-radius: 10px;
-      background: linear-gradient(180deg, var(--tile-2), transparent);
-    }
-    .flip__inner { position: absolute; inset: 0; transform-style: preserve-3d; animation: flip 8s infinite;
-      display: grid; place-items: center; font-size: 2.2rem; font-weight: 800; letter-spacing: .5px; }
-    .flip__face { position:absolute; inset:0; display:grid; place-items:center; backface-visibility: hidden; }
-    .flip__back { transform: rotateY(180deg); }
-    @keyframes flip { 0%,45% { transform: rotateY(0) } 55%,100% { transform: rotateY(180deg) } }
-
-    /* Ripple */
-    .ripple {
-      position: absolute; border-radius: 999px; pointer-events: none; transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(255,255,255,.35), rgba(255,255,255,0) 60%);
-      animation: ripple .7s ease-out forwards;
-    }
-    @keyframes ripple { from { width: 0; height: 0; opacity: .7; } to { width: 360px; height: 360px; opacity: 0; } }
-
-    /* Appear animation for tiles */
-    .tile { opacity: 0; transform: translateX(12px) skewX(-3deg) scale(.98); }
-    .app.ready .tile { animation: metroIn .55s both; }
-    .app.ready .tile:nth-child(1) { animation-delay: .05s; }
-    .app.ready .tile:nth-child(2) { animation-delay: .1s; }
-    .app.ready .tile:nth-child(3) { animation-delay: .15s; }
-    .app.ready .tile:nth-child(4) { animation-delay: .2s; }
-    .app.ready .tile:nth-child(5) { animation-delay: .25s; }
-    .app.ready .tile:nth-child(6) { animation-delay: .3s; }
-    .app.ready .tile:nth-child(7) { animation-delay: .35s; }
-    .app.ready .tile:nth-child(8) { animation-delay: .4s; }
-    @keyframes metroIn { from { opacity: 0; transform: translateX(24px) skewX(-6deg) scale(.98); } to { opacity: 1; transform: translateX(0) skewX(0) scale(1);} }
-
-    /* Tap leave: fold + swipe right */
-    .tile.leaving { pointer-events: none; animation: metroLeave .45s cubic-bezier(.2,.8,.2,1) both; }
-    @keyframes metroLeave { from { opacity: 1; transform: rotateY(0deg) translateX(0) skewX(0); }
-      to { opacity: 0; transform: rotateY(-14deg) translateX(80px) skewX(-6deg); } }
-
-    /* Reduce motion */
-    @media (prefers-reduced-motion: reduce) {
-      .flip__inner { animation: none; }
-      .tile, .splash { transition: none !important; }
-      .app.ready .tile { animation: none; opacity: 1; transform: none; }
-      .ripple { display: none; }
-    }
-
-    /* Footer */
-    footer { color: var(--text-dim); font-size: .85rem; padding: 10px 18px 24px; text-align: center; }
+    /* ensure no accidental scrollbars on tiny screens */
+    @media (max-height: 520px){ .grid{ transform: scale(.95); transform-origin: top left; } }
   </style>
 </head>
 <body>
-  <!-- SPLASH / TAP TO START -->
-  <section class="splash" id="splash" aria-label="Splash screen">
-    <div class="splash__card" role="dialog" aria-modal="true" aria-labelledby="appTitle" aria-describedby="appTagline">
-      <div class="logo" aria-hidden="true">
-        <img src="academy-logo.png" alt="Essentia Academy logo" class="logo-img" />
-      </div>
-            <p class="tagline" id="appTagline">Tap to start</p>
-      <button class="tap" id="tapStart" aria-label="Tap to start">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a5 5 0 00-5 5v3.126a2 2 0 00-1 .874l-1.5 2.5a2 2 0 103.464 2.052L8 13.874V7a4 4 0 118 0v6.382l1.036-.691a2 2 0 112.2 3.332l-3.9 2.6A5 5 0 0112 20H9a3 3 0 110-6h.5"/></svg>
-        <span>Tap to start</span>
-      </button>
-      
-    </div>
-  </section>
-
-  <!-- APP CHROME -->
-  <div class="app" id="app" aria-live="polite" aria-busy="true">
-    <header class="topbar">
-      <div class="brand">Essentia Academy</div>
-      <div class="search" role="search">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1016 15.5l.27.28v.79L21 21.5 19.5 23l-4.5-4.5v-.79l-.27-.28zM10 15a5 5 0 110-10 5 5 0 010 10z"/></svg>
-        <input id="searchInput" type="search" placeholder="Search tiles" aria-label="Search tiles" />
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <img src="academy-logo.png" alt="Essentia Academy" />
+        <div class="title">Essentia Academy</div>
       </div>
     </header>
 
-    <!-- METRO GRID -->
-    <main class="tiles" id="tiles" tabindex="-1">
-      <!-- Big live tile -->
-      <a class="tile tile--big" href="#" role="button" aria-label="Courses">
-        <div class="tile__title">Courses</div>
-        <div class="flip" aria-hidden="true">
-          <div class="flip__inner">
-            <div class="flip__face">📚</div>
-            <div class="flip__face flip__back">🎓</div>
-          </div>
+    <main class="grid" id="grid">
+      <!-- Time (London) -->
+      <a class="tile time size-2x2" href="#" aria-label="Current time in London">
+        <div>
+          <div class="clock" id="clock">—:—</div>
+          <div class="date" id="date">Loading…</div>
         </div>
-        <div class="tile__meta">Browse & book training</div>
+        <div class="label">London</div>
       </a>
 
-      <a class="tile tile--wide" href="#" role="button" aria-label="Apprenticeships">
-        <div class="tile__title">Apprenticeships</div>
-        <div class="tile__meta">Routes, levels, guidance</div>
+      <!-- Weather (London) -->
+      <a class="tile weather size-4x2" href="#" aria-label="Weather in London">
+        <div class="temp" id="w-temp">--°</div>
+        <div class="cond" id="w-cond">Loading weather…</div>
+        <div class="label">Weather</div>
       </a>
 
-      <a class="tile" href="#" role="button" aria-label="Calendar">
-        <div class="tile__title">Calendar</div>
-        <div class="tile__meta">Sessions & key dates</div>
+      <!-- Mock tiles to match template look -->
+      <a class="tile mail size-2x1" href="#" aria-label="Mail">
+        <div class="icon">✉️</div>
+        <div class="label">Mail</div>
       </a>
 
-      <a class="tile tile--tall" href="#" role="button" aria-label="Check-in">
-        <div class="tile__title">Check-in</div>
-        <div class="tile__meta">QR attendance</div>
+      <a class="tile calendar size-2x1" href="#" aria-label="Calendar">
+        <div class="icon">📅</div>
+        <div class="label">Calendar</div>
       </a>
 
-      <a class="tile tile--wide" href="#" role="button" aria-label="Guides">
-        <div class="tile__title">Guides</div>
-        <div class="tile__meta">How-to & templates</div>
+      <a class="tile people size-1x1" href="#" aria-label="People">
+        <div class="icon">👤</div>
+        <div class="label">People</div>
       </a>
 
-      <a class="tile" href="#" role="button" aria-label="Providers">
-        <div class="tile__title">Providers</div>
-        <div class="tile__meta">Contacts & SLAs</div>
-      </a>
-
-      <a class="tile" href="#" role="button" aria-label="Support">
-        <div class="tile__title">Support</div>
-        <div class="tile__meta">Ask the Academy</div>
-      </a>
-
-      <a class="tile" href="#" role="button" aria-label="About">
-        <div class="tile__title">About</div>
-        <div class="tile__meta">Essentia Academy</div>
+      <a class="tile photos size-2x1" href="#" aria-label="Photos">
+        <div class="icon">🖼️</div>
+        <div class="label">Photos</div>
       </a>
     </main>
-
-    <footer>DT&I Essentia Academy • Windows&nbsp;Phone‑style prototype</footer>
   </div>
 
   <script>
-    const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const grid = document.getElementById('grid');
+    window.addEventListener('load', ()=> grid.classList.add('ready'));
 
-    const splash = $('#splash');
-    const app    = $('#app');
-    const tiles  = $('#tiles');
-    const tapBtn = $('#tapStart');
-    const search = $('#searchInput');
-
-    // Start: hide splash, show app
-    let started = false;
-    function startApp(){
-      if (started) return;
-      started = true;
-      splash.classList.add('hidden');
-      app.classList.add('ready');
-      app.setAttribute('aria-busy','false');
-      setTimeout(()=> tiles.focus({preventScroll:true}), 350);
+    /* Time tile — London */
+    function updateClock(){
+      const now = new Date();
+      const fmtTime = new Intl.DateTimeFormat('en-GB', { hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Europe/London' });
+      const fmtDate = new Intl.DateTimeFormat('en-GB', { weekday:'short', day:'2-digit', month:'short', year:'numeric', timeZone:'Europe/London' });
+      document.getElementById('clock').textContent = fmtTime.format(now);
+      document.getElementById('date').textContent  = fmtDate.format(now);
     }
+    updateClock();
+    setInterval(updateClock, 1000*15);
 
-    // Start on any tap/click within splash or on the button
-    splash.addEventListener('click', startApp);
-    tapBtn.addEventListener('click', startApp);
-
-    // Keyboard fallback (Enter/Space)
-    document.addEventListener('keydown', e=>{
-      if ((e.key==='Enter' || e.key===' ') && !started) {
-        e.preventDefault();
-        startApp();
+    /* Weather tile — simple Open‑Meteo fetch for London */
+    async function loadWeather(){
+      try{
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=51.5072&longitude=-0.1276&current_weather=true&timezone=auto';
+        const res = await fetch(url, { cache:'no-store' });
+        const data = await res.json();
+        const cw = data.current_weather;
+        const codeMap = {
+          0:'Clear', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
+          45:'Fog', 48:'Depositing rime fog', 51:'Drizzle', 61:'Rain', 71:'Snow', 80:'Rain showers', 95:'Thunderstorm'
+        };
+        document.getElementById('w-temp').textContent = Math.round(cw.temperature) + '°C';
+        document.getElementById('w-cond').textContent = (codeMap[cw.weathercode]||'');
+      }catch(e){
+        document.getElementById('w-cond').textContent = 'Weather unavailable';
       }
-    });
-
-    // Ripple effect on tiles
-    function addRipple(e, el){
-      const rect = el.getBoundingClientRect();
-      const x = (e.clientX ?? (rect.left + rect.width/2)) - rect.left;
-      const y = (e.clientY ?? (rect.top + rect.height/2)) - rect.top;
-      const r = document.createElement('span');
-      r.className = 'ripple';
-      r.style.left = x + 'px';
-      r.style.top  = y + 'px';
-      el.appendChild(r);
-      r.addEventListener('animationend', ()=> r.remove());
     }
-
-    $$('.tile').forEach(t => {
-      t.addEventListener('pointerdown', e => addRipple(e, t));
-      t.addEventListener('click', e => {
-        // Metro-style leave animation then follow link
-        if (!t.classList.contains('leaving')) {
-          e.preventDefault();
-          t.classList.add('leaving');
-          setTimeout(() => {
-            const href = t.getAttribute('href');
-            if (href && href !== '#') location.href = href; else t.classList.remove('leaving');
-          }, 430);
-        }
-      });
-      t.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); addRipple(e, t); t.click(); } });
-    });
-
-    // Simple tile search/filter
-    search.addEventListener('input', () => {
-      const q = search.value.trim().toLowerCase();
-      $$('.tile').forEach(t => {
-        const text = (t.textContent || '').toLowerCase();
-        t.style.display = text.includes(q) ? '' : 'none';
-      });
-    });
-
-    // Prevent scroll bounce on iOS when tapping rapidly
-    document.addEventListener('gesturestart', e => e.preventDefault());
+    loadWeather();
   </script>
 </body>
 </html>
