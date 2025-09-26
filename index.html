@@ -4,63 +4,63 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Essentia Academy — Start</title>
-  <meta name="theme-color" content="#007070" />
+  <meta name="theme-color" content="#0f6a7a" />
   <style>
     :root{
-      --bg: #0f6a7a;           /* Win8 teal vibe */
-      --bg2:#0a5561;
-      --text: #f5f8fb;
-      --muted:#d7e7eb;
-      --tile-blue:#2d89ef;
-      --tile-green:#00a300;
-      --tile-purple:#7e3878;
-      --tile-orange:#da532c;
-      --tile-pink:#e671b8;
-      --tile-cyan:#00aba9;
-      --shadow: 0 14px 30px rgba(0,0,0,.25);
-      --gap: 12px;
-      106px, 12vw, 164px);           /* base tile size */
+      --bg:#0f6a7a; --bg2:#0a5561; --text:#f5f8fb;
+      --tile-blue:#2d89ef; --tile-green:#00a300; --tile-purple:#7e3878; --tile-orange:#da532c; --tile-pink:#e671b8; --tile-cyan:#00aba9;
+      --shadow:0 14px 30px rgba(0,0,0,.25);
+      --gap:12px; --unit: clamp(110px, 12vw, 170px);
     }
-
     *{box-sizing:border-box}
-    html,body{height:10body{
-      margin:0; color:var(--text); font-family: Calibri, "Segoe UI", -apple-system, system-ui, Roboto, Arial;
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text); font-family: Calibri, "Segoe UI", -apple-system, system-ui, Roboto, Arial, sans-serif;
       background:
         radial-gradient(900px 600px at 80% -10%, rgba(255,255,255,.06), transparent 60%),
         radial-gradient(700px 500px at -10% 90%, rgba(255,255,255,.05), transparent 60%),
         linear-gradient(180deg, var(--bg), var(--bg2));
       -webkit-tap-highlight-color: transparent;
-    } Win8 swirl overlay */
-    body::after{
-      content:""; position:fixed; inset:0; pointer-events:none; opacity:.18; mix-blend:overlay;
+      display:flex; align-items:center; justify-content:center; min-height:100dvh; overflow:auto;
+    }
+    /* subtle Win8 swirl overlay */
+    body::after{ content:""; position:fixed; inset:0; pointer-events:none; opacity:.18; mix-blend:overlay;
       background:url('data:image/svg+xml;utf8,\
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">\
           <defs><path id="s" d="M0 0c120 40 180 160 300 180s220-60 320 0" fill="none" stroke="%23ffffff" stroke-width="8" opacity=".3"/></defs>\
           <use href="#s"/>\
           <use href="#s" transform="translate(-60 160) scale(1.1)"/>\
           <use href="#s" transform="translate(0 320) scale(.9)"/>\
-        </svg>') center/cover noe-content:center; gap:10px;}
+        </svg>') center/cover no-repeat; }
 
-    header{display:flex; align-items:center; galex; align-items:center; gap:12px}
-    .brand img{height:clamp(64px, 9vw, 120px); width:auto; display:block}
-    .brand .title{font-weight:800; letter-spacing:.4px; font-size:1.25rem}
+    /* Stage centres header+grid as one block */
+    .stage{ width: clamp(920px, 90vw, 1280px); }
 
- ense; gap:var(--gap); grid-template-columns: repeat(8, var(--unit)); grid-auto-rows: var(--unit); align-content:start; width:min(calc(var(--unit)*8 + var(--gap)*7), 90vw); margin:0 autgrid-template-columns: repeat(3, var(--unit)); } }
+    header{ display:flex; align-items:center; gap:16px; user-select:none; padding:6px 0 10px; }
+    .brand img{ height: clamp(80px, 10vw, 140px); width:auto; display:block; }
 
-    .tile{
-      border-radius:4px; box-shadow:var(--shadow); padding:10px; display:flex; flex-direction:column; gap:6px;
-      color:white; text-decoration:none; position:relative; overflow:hidden; outline:none;
-      transform: translateZ(0); /* enable GPU */
-      transition: transform .1s ease;
-    }
-    .tile:focus-visible{outline:3px solid rgba(255,255,255,.6@media (max-width: 780px){  .grid{ grid-template-columns: repeat(4, var(--unit)); width:min(calc(var(--unit)*4 + var(--gap)*3), 92vw);} }rid-row@media (max-width: 620px){  .grid{ grid-template-columns: repeat(3, var(--unit)); width:min(calc(var(--unit)*3 + var(--gap)*2), 94vw);} }pan 1; }
+    .grid{ display:grid; grid-auto-flow:dense; gap:var(--gap);
+      grid-template-columns: repeat(8, var(--unit)); grid-auto-rows: var(--unit); }
+
+    /* Responsive breakpoints keep the block centred and similar scale */
+    @media (max-width: 1200px){ .grid{ grid-template-columns: repeat(6, var(--unit)); } }
+    @media (max-width: 960px){  .grid{ grid-template-columns: repeat(5, var(--unit)); } }
+    @media (max-width: 780px){  .grid{ grid-template-columns: repeat(4, var(--unit)); } }
+    @media (max-width: 620px){  .grid{ grid-template-columns: repeat(3, var(--unit)); } }
+
+    .tile{ border-radius:4px; box-shadow:var(--shadow); padding:10px; display:flex; flex-direction:column; gap:6px;
+      color:#fff; text-decoration:none; position:relative; overflow:hidden; outline:none; transition: transform .1s ease; }
+    .tile:focus-visible{ outline:3px solid rgba(255,255,255,.6) }
+    .tile:active{ transform: scale(.98) }
+
+    .size-1x1{ grid-column: span 1; grid-row: span 1; min-width: var(--unit); }
+    .size-2x1{ grid-column: span 2; grid-row: span 1; }
     .size-2x2{ grid-column: span 2; grid-row: span 2; }
     .size-4x2{ grid-column: span 4; grid-row: span 2; }
 
-    .tile .label{ margin-top:auto; font-weight:700; opacity:.95; }
+    .label{ margin-top:auto; font-weight:700; opacity:.95; }
     .icon{ font-size:28px; line-height:1 }
 
-    /* specific tiles */
     .time{ background:var(--tile-purple); display:flex; align-items:flex-start; justify-content:space-between; }
     .time .clock{ font-size:52px; font-weight:800; letter-spacing:.5px; }
     .time .date{ font-size:14px; opacity:.9; }
@@ -74,7 +74,7 @@
     .people{ background:var(--tile-pink); }
     .photos{ background:var(--tile-cyan); }
 
-    /* tile intro like Metro */
+    /* Metro entry */
     .grid .tile{ opacity:0; transform: translateX(12px) skewX(-4deg) }
     .grid.ready .tile{ animation: enter .5s both; }
     .grid.ready .tile:nth-child(1){ animation-delay:.05s }
@@ -86,17 +86,13 @@
     .grid.ready .tile:nth-child(7){ animation-delay:.35s }
     .grid.ready .tile:nth-child(8){ animation-delay:.4s }
     @keyframes enter{ to{ opacity:1; transform:none } }
-
-    /* ensure no accidental scrollbars on tiny screens */
-    @media (max-height: 520px){ .grid{ transform: scale(.95); transform-origin: top left; } }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="stage">
     <header>
       <div class="brand">
-        <img src="academy-logo.png" alt="Essentia Academy" />
-        
+        <img src="academy-logo.png" alt="Essentia Academy"/>
       </div>
     </header>
 
@@ -105,17 +101,19 @@
       <a class="tile time size-2x2" href="#" aria-label="Current time in London">
         <div>
           <div class="clock" id="clock">—:—</div>
-          <div class="date" id="date">v class="label">London</div>
+          <div class="date" id="date">Loading…</div>
+        </div>
+        <div class="label">London</div>
       </a>
 
       <!-- Weather (London) -->
       <a class="tile weather size-4x2" href="#" aria-label="Weather in London">
-        <div class="temp" id="w-temp">--°</div>
+        <div class="temp" id="w-temp">--°C</div>
         <div class="cond" id="w-cond">Loading weather…</div>
         <div class="label">Weather</div>
       </a>
 
-      <!-- Mock tiles to match template look -->
+      <!-- Mock tiles -->
       <a class="tile mail size-2x1" href="#" aria-label="Mail">
         <div class="icon">✉️</div>
         <div class="label">Mail</div>
@@ -142,7 +140,7 @@
     const grid = document.getElementById('grid');
     window.addEventListener('load', ()=> grid.classList.add('ready'));
 
-    /* Time tile — London */
+    // Time (London)
     function updateClock(){
       const now = new Date();
       const fmtTime = new Intl.DateTimeFormat('en-GB', { hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Europe/London' });
@@ -150,25 +148,20 @@
       document.getElementById('clock').textContent = fmtTime.format(now);
       document.getElementById('date').textContent  = fmtDate.format(now);
     }
-    updateClock();
-    setInterval(updateClock, 1000*15);
+    updateClock(); setInterval(updateClock, 15000);
 
-    /* Weather tile — simple Open‑Meteo fetch for London */
+    // Weather (London) via Open‑Meteo
     async function loadWeather(){
       try{
-        const url = 'https://api.open-meteo.com/v1/forecast?latitude=51.5072&longitude=-0.1276&current_weather=true&timezone=auto';
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=51.5072&longitude=-0.1276&current_weather=true&timezone=Europe%2FLondon';
         const res = await fetch(url, { cache:'no-store' });
+        if(!res.ok) throw new Error('HTTP '+res.status);
         const data = await res.json();
         const cw = data.current_weather;
-        const codeMap = {
-          0:'Clear', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
-          45:'Fog', 48:'Depositing rime fog', 51:'Drizzle', 61:'Rain', 71:'Snow', 80:'Rain showers', 95:'Thunderstorm'
-        };
+        const codeMap = {0:'Clear',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Rime fog',51:'Drizzle',61:'Rain',71:'Snow',80:'Showers',95:'Thunderstorm'};
         document.getElementById('w-temp').textContent = Math.round(cw.temperature) + '°C';
-        document.getElementById('w-cond').textContent = (codeMap[cw.weathercode]||'');
-      }catch(e){
-        document.getElementById('w-cond').textContent = 'Weather unavailable';
-      }
+        document.getElementById('w-cond').textContent = codeMap[cw.weathercode] || '';
+      }catch(e){ document.getElementById('w-cond').textContent = 'Weather unavailable'; }
     }
     loadWeather();
   </script>
