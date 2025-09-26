@@ -19,21 +19,18 @@
       --tile-cyan:#00aba9;
       --shadow: 0 14px 30px rgba(0,0,0,.25);
       --gap: 12px;
-      --unit: 120px;           /* base tile size */
+      106px, 12vw, 164px);           /* base tile size */
     }
 
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; color:var(--text); font-family:"Segoe UI", -apple-system, system-ui, Roboto, Arial;
+    html,body{height:10body{
+      margin:0; color:var(--text); font-family: Calibri, "Segoe UI", -apple-system, system-ui, Roboto, Arial;
       background:
         radial-gradient(900px 600px at 80% -10%, rgba(255,255,255,.06), transparent 60%),
         radial-gradient(700px 500px at -10% 90%, rgba(255,255,255,.05), transparent 60%),
         linear-gradient(180deg, var(--bg), var(--bg2));
-      overflow:hidden; /* keep to one screen */
       -webkit-tap-highlight-color: transparent;
-    }
-    /* subtle Win8 swirl overlay */
+    } Win8 swirl overlay */
     body::after{
       content:""; position:fixed; inset:0; pointer-events:none; opacity:.18; mix-blend:overlay;
       background:url('data:image/svg+xml;utf8,\
@@ -42,30 +39,13 @@
           <use href="#s"/>\
           <use href="#s" transform="translate(-60 160) scale(1.1)"/>\
           <use href="#s" transform="translate(0 320) scale(.9)"/>\
-        </svg>') center/cover no-repeat;
-    }
+        </svg>') center/cover noe-content:center; gap:10px;}
 
-    .wrap{display:grid; grid-template-rows:auto 1fr; height:100dvh}
-
-    header{
-      display:flex; align-items:center; gap:16px; padding:18px 20px 8px; user-select:none;
-    }
-    .brand{display:flex; align-items:center; gap:12px}
-    .brand img{height:40px; width:auto; display:block}
+    header{display:flex; align-items:center; galex; align-items:center; gap:12px}
+    .brand img{height:clamp(64px, 9vw, 120px); width:auto; display:block}
     .brand .title{font-weight:800; letter-spacing:.4px; font-size:1.25rem}
 
-    .grid{
-      padding:12px 20px 20px; height:calc(100dvh - 66px); /* header height approx */
-      display:grid; grid-auto-flow:dense; gap:var(--gap);
-      grid-template-columns: repeat(8, var(--unit));
-      grid-auto-rows: var(--unit);
-      overflow:hidden; /* no scrollbars */
-      align-content:start;
-    }
-    @media (max-width: 1200px){ .grid{ grid-template-columns: repeat(6, var(--unit)); } }
-    @media (max-width: 960px){  .grid{ grid-template-columns: repeat(5, var(--unit)); } }
-    @media (max-width: 780px){  .grid{ grid-template-columns: repeat(4, var(--unit)); } }
-    @media (max-width: 620px){  .grid{ grid-template-columns: repeat(3, var(--unit)); } }
+ ense; gap:var(--gap); grid-template-columns: repeat(8, var(--unit)); grid-auto-rows: var(--unit); align-content:start; width:min(calc(var(--unit)*8 + var(--gap)*7), 90vw); margin:0 autgrid-template-columns: repeat(3, var(--unit)); } }
 
     .tile{
       border-radius:4px; box-shadow:var(--shadow); padding:10px; display:flex; flex-direction:column; gap:6px;
@@ -73,11 +53,7 @@
       transform: translateZ(0); /* enable GPU */
       transition: transform .1s ease;
     }
-    .tile:focus-visible{outline:3px solid rgba(255,255,255,.6)}
-    .tile:active{ transform: scale(.98) }
-
-    .size-1x1{ grid-column: span 1; grid-row: span 1; min-width: var(--unit); }
-    .size-2x1{ grid-column: span 2; grid-row: span 1; }
+    .tile:focus-visible{outline:3px solid rgba(255,255,255,.6@media (max-width: 780px){  .grid{ grid-template-columns: repeat(4, var(--unit)); width:min(calc(var(--unit)*4 + var(--gap)*3), 92vw);} }rid-row@media (max-width: 620px){  .grid{ grid-template-columns: repeat(3, var(--unit)); width:min(calc(var(--unit)*3 + var(--gap)*2), 94vw);} }pan 1; }
     .size-2x2{ grid-column: span 2; grid-row: span 2; }
     .size-4x2{ grid-column: span 4; grid-row: span 2; }
 
@@ -120,7 +96,7 @@
     <header>
       <div class="brand">
         <img src="academy-logo.png" alt="Essentia Academy" />
-        <div class="title">Essentia Academy</div>
+        
       </div>
     </header>
 
@@ -129,9 +105,7 @@
       <a class="tile time size-2x2" href="#" aria-label="Current time in London">
         <div>
           <div class="clock" id="clock">—:—</div>
-          <div class="date" id="date">Loading…</div>
-        </div>
-        <div class="label">London</div>
+          <div class="date" id="date">v class="label">London</div>
       </a>
 
       <!-- Weather (London) -->
