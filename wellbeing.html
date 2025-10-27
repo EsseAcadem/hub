@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Essentia Academy 🄷🅄🄱</title>
+  <meta name="theme-color" content="#0f6a7a" />
+  <style>
+    :root{
+      --bg:#0f6a7a; --bg2:#0a5561; --text:#f5f8fb;
+      --shadow:0 14px 30px rgba(0,0,0,.25);
+      --gap:12px; --unit: clamp(110px, 12vw, 170px);
+      /* brand tint (default blue kept for other tiles) */
+      --tile-blue:#2d89ef;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0; color:var(--text);
+      font-family: Calibri, "Segoe UI", -apple-system, system-ui, Roboto, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      background:#004050; overflow-x:hidden;
+    }
+
+    .stage{ position:relative; z-index:2; }
+    .block{ width: fit-content; margin: 0 auto; padding-bottom: 48px; }
+
+    header{
+      display:flex; align-items:center; justify-content:flex-start; gap:16px; user-select:none;
+      padding-top: calc(env(safe-area-inset-top, 0px) + clamp(24px, 6vh, 100px));
+      margin:0 0 clamp(40px, 5vh, 88px);
+    }
+    .brand img{ height: clamp(90px, 12vw, 160px); width:auto; display:block }
+
+    .grid{
+      display:grid; grid-auto-flow:dense; gap:var(--gap);
+      grid-template-columns: repeat(8, var(--unit)); grid-auto-rows: var(--unit);
+      width: fit-content; margin-left:auto; margin-right:auto; justify-content:center; margin-bottom:24px;
+    }
+    @media (max-width: 1200px){ .grid{ grid-template-columns: repeat(6, var(--unit)); } }
+    @media (max-width: 960px){  .grid{ grid-template-columns: repeat(5, var(--unit)); } }
+    @media (max-width: 780px){  .grid{ grid-template-columns: repeat(4, var(--unit)); } }
+    @media (max-width: 620px){  .grid{ grid-template-columns: repeat(3, var(--unit)); } }
+
+    .tile{
+      border-radius:22px; padding:18px; display:flex; flex-direction:column; gap:10px;
+      color:#fff; text-decoration:none; position:relative; overflow:hidden; outline:none;
+      transition: transform .1s ease, box-shadow .2s ease, background .2s ease;
+      /* Frosty glass base */
+      background: rgba(255,255,255,.08);
+      -webkit-backdrop-filter: blur(14px) saturate(120%);
+      backdrop-filter: blur(14px) saturate(120%);
+      /* Glassy edge + soft depth */
+      border: 1px solid rgba(255,255,255,.35);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.28);
+    }
+    .tile:focus-visible{ outline:3px solid rgba(255,255,255,.6) }
+    .tile:active{ transform: scale(.98) }
+
+    .size-full{
+      grid-column: 1 / -1;
+      grid-row: span 3;
+      /* add ~0.4 of a row’s extra height */
+      min-height: calc(var(--unit) * 3 + var(--gap) * 2 + var(--unit) * 0.4);
+    }
+
+    /* Full-page, single-tile layout (default uses blue tint; we’ll override for this tile) */
+    .fullpage{
+      background: color-mix(in srgb, var(--tile-blue) 22%, rgba(255,255,255,.08));
+      border-color: color-mix(in srgb, var(--tile-blue) 44%, transparent);
+    }
+    .fullpage:hover{
+      background: color-mix(in srgb, var(--tile-blue) 29%, rgba(255,255,255,.10));
+      border-color: color-mix(in srgb, var(--tile-blue) 58%, transparent);
+    }
+    .fullpage .label{ display:none; }
+
+    /* Apply the Wellbeing/People pink tint ONLY to this main tile */
+    .tile.fullpage.people{
+      background: color-mix(in srgb, #e671b8 28%, rgba(255,255,255,.08));
+      border-color: color-mix(in srgb, #e671b8 40%, transparent);
+    }
+    .tile.fullpage.people:hover{
+      background: color-mix(in srgb, #e671b8 28%, rgba(255,255,255,.08));
+      border-color: color-mix(in srgb, #e671b8 40%, transparent);
+    }
+
+    .fp-title{ font-weight:800; font-size: clamp(22px, 2.2vw, 28px); letter-spacing:.2px; margin:4px 4px 12px; }
+
+    .fp-columns{ display:grid; grid-template-columns: 2fr 1fr; gap:10px; padding:8px 10px 56px; }
+    .fp-columns .col{ min-height: 120px; }
+    .fp-columns .col.text{ font-size: clamp(15px, 1.2vw, 19px); line-height:1.6; }
+    .fp-columns .col.photo{ align-self:start; }
+
+    .photo-figure{ margin:0; padding:0 2px; display:flex; flex-direction:column; gap:12px; }
+    .photo{
+      width:100%; height:auto; display:block; border-radius:16px; object-fit:cover; aspect-ratio: 4 / 3;
+      background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.28);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+    }
+    .caption{ font-size:.95rem; opacity:.9; }
+
+    @media (max-width: 900px){
+      .fp-columns{ grid-template-columns: 1fr; padding:8px 6px 56px; }
+    }
+
+    /* Metro entry (kept for a touch of motion) */
+    .grid .tile{ opacity:0; transform: translateX(12px) skewX(-4deg) }
+    .grid.ready .tile{ animation: enter .5s both; }
+    @keyframes enter{ to{ opacity:1; transform:none } }
+
+    /* Animated background */
+    .animateme{ position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; pointer-events:none; }
+    .bg-bubbles{ position: absolute; inset: 0; z-index: 1; }
+    .bg-bubbles li{
+      position: absolute; list-style:none; display:block; width: 40px; height: 40px; background-color: #353535; bottom: 60px;
+      animation: square 25s linear infinite; opacity:0;
+    }
+    .bg-bubbles li:nth-child(1){ left: 3%; border-radius:50em; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(2){ left: 6%; width: 75px; height: 75px; animation-delay: 2s; animation-duration:17s; }
+    .bg-bubbles li:nth-child(3){ left: 15%; width: 175px; height: 175px; animation-delay: 4s; }
+    .bg-bubbles li:nth-child(4){ left: 40%; width: 90px; height: 90px; animation-duration:22s; }
+    .bg-bubbles li:nth-child(5){ left: 70%; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(6){ left: 90%; width: 90px; height: 90px; animation-delay: 3s; border-radius:50em; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(7){ left: 32%; width: 60px; height: 60px; animation-delay: 7s; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(8){ left: 55%; width: 50px; height: 50px; animation-delay: 15s; animation-duration:40s; }
+    .bg-bubbles li:nth-child(9){ left: 30%; width: 140px; height: 140px; animation-delay: 2s; animation-duration:40s; border-radius:50em; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(10){ left: 90%; width: 60px; height: 60px; animation-delay: 11s; }
+    .bg-bubbles li:nth-child(11){ left: 10%; width: 40px; height: 40px; animation-delay: 13s; border-radius:50em; }
+    .bg-bubbles li:nth-child(12){ left: 55%; width: 175px; height: 175px; animation-delay: 7s; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(13){ left: 65%; width: 100px; height: 100px; animation-delay: 8s; border-radius:50em; }
+
+    @keyframes square {
+      0% { transform: translateY(0); opacity:0; }
+      50% { opacity:1; }
+      100% { transform: translateY(-700px) rotate(600deg); opacity:0; }
+    }
+
+    /* ===== Scrollable text inside the tile (scrollbars hidden) ===== */
+    .fullpage .fp-columns{ flex: 1; min-height: 0; }
+    .fullpage .fp-columns .col{ min-height: 0; }
+    .fullpage .fp-columns .col.text{
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      scrollbar-width: none;      /* Firefox */
+      -ms-overflow-style: none;   /* IE/old Edge */
+    }
+    .fullpage .fp-columns .col.text::-webkit-scrollbar{ width: 0; height: 0; }
+
+    /* Keep photo column pinned within the tile while text scrolls */
+    .fullpage .fp-columns .col.photo{
+      position: sticky;
+      top: 8px;
+      align-self: start;
+      height: fit-content;
+    }
+
+    /* Ensure Back button is always clickable */
+    .fp-back{
+      position:absolute; bottom:12px; left:12px;
+      appearance:none; border:1px solid rgba(255,255,255,.35);
+      background: rgba(255,255,255,.12);
+      -webkit-backdrop-filter: blur(10px) saturate(120%);
+      backdrop-filter: blur(10px) saturate(120%);
+      padding:8px 12px; border-radius:12px; text-decoration:none; color:#fff;
+      font-weight:700; font-size:14px;
+      z-index:5;             /* <-- fix */
+      pointer-events:auto;   /* safety */
+    }
+    .fp-back:hover{ background: rgba(255,255,255,.18); }
+
+/* Mobile tidy-up: let the tile hug its content */
+@media (max-width: 700px){
+  /* Stop forcing 3 grid rows and any tall min-height */
+  .tile.fullpage.size-full{
+    grid-row: auto;
+    min-height: auto;
+    padding: 16px;
+    align-self: start;
+  }
+
+  /* Stack columns and tighten spacing */
+  .fp-columns{
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 6px 6px 28px; /* smaller bottom padding */
+  }
+
+  /* Let text flow normally (no inner scrollbar on small screens) */
+  .fullpage .fp-columns .col.text{
+    overflow: visible;
+  }
+
+  /* Turn off sticky photo so it doesn’t create awkward whitespace */
+  .fullpage .fp-columns .col.photo{
+    position: static;
+  }
+
+  /* Make the grid rows size to content (not the unit track height) */
+  .grid{
+    grid-auto-rows: auto;
+  }
+
+  /* Trim page bottom space a bit */
+  .block{ padding-bottom: 20px; }
+
+  /* Keep the back button snug */
+  .fp-back{ bottom: 8px; }
+}
+
+/* Extra-tight on very small phones */
+@media (max-width: 420px){
+  .tile.fullpage.size-full{ padding: 14px; }
+  .fp-columns{ gap: 10px; padding-bottom: 24px; }
+}
+/* Give the content area more room above the Back chip */
+.fullpage .fp-columns{
+  padding-bottom: 84px;   /* was 56px */
+}
+
+/* Mobile: slightly less, but still clear the chip */
+@media (max-width: 700px){
+  .fp-columns{
+    padding-bottom: 72px; /* was ~28–40px in earlier tweaks */
+  }
+/* Make sure long words in the caption wrap instead of pushing down */
+.caption{
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+/* Reserve space above the Back button so captions never clash */
+.fullpage .fp-columns::after{
+  content:"";
+  display:block;
+  height: 72px;   /* matches chip size + breathing room */
+}
+
+/* Mobile: a touch less space */
+@media (max-width: 700px){
+  .fullpage .fp-columns::after{ height: 64px; }
+}
+
+/* Give the caption a little top/bottom margin for comfort */
+.caption{
+  margin: 8px 0 6px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+
+
+
+  </style>
+</head>
+<body>
+  <div class="animateme">
+    <ul class="bg-bubbles">
+      <li></li><li></li><li></li><li></li><li></li><li></li>
+      <li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+    </ul>
+  </div>
+
+  <div class="stage">
+    <div class="block">
+      <header>
+        <div class="brand">
+          <a href="index.html"><img src="academy-logo.png" alt="Essentia Academy" /></a>
+        </div>
+      </header>
+
+      <main class="grid" id="grid">
+        <!-- Pink tint only for this tile -->
+        <article class="tile fullpage size-full people" aria-label="Full page">
+          <h2 class="fp-title" id="fp-title" style="margin:0 0 9px 0;">Well-being</h2>
+
+          <div class="fp-columns" id="fp-columns">
+            <div class="col text">
+              <p style="margin:0 0 12px 0; opacity:.96;">
+                With ever-increasing pressures at work and home, there are times when we all need some extra support to balance the demands of everyday life.
+              </p>
+              <p>
+                To support you to manage life's everyday challenges, Guy's and St Thomas' has commissioned <strong>Care first</strong> — an Employee Assistance Programme (EAP) — to provide you with fast access to counselling and expert help when you need it.
+              </p>
+              <p>
+               <b>🔸Care first:</b> Employ professionally qualified counsellors and information specialists, who are experienced in helping people to deal with all kinds of practical and emotional issues such as wellbeing, family matters, relationships, debt management, workplace issues and much more.
+              </p>
+              <p>
+               <b>🔸Care first counselling:</b> is available <strong>24 hours a day, 365 days a year</strong> and is accessible by phone or online. 
+Care first advice service is available <strong>8am–8pm Monday to Friday
+<p>
+
+<p class="tel-line" style="text-align:center; font-size:30px; margin:14px 0;">
+📱 0800 174 319 | ✈️ +44 (0)1452 623243
+
+</strong>
+
+              </p>
+
+
+            </div>
+
+            <div class="col photo">
+              <figure class="photo-figure">
+                <img id="fp-photo" class="photo" src="beach.jpg" alt="Wellbeing support" />
+                <figcaption class="caption" id="fp-legend">
+                  The service is confidential. Guy's and St Thomas' will not know if you have used Care first.
+                  <div style="margin-top:16px; display:grid; grid-template-columns: auto 1fr; gap:8px 12px; align-items:center;">
+                    <div><b>Login</b>:</div><div><code>gst001</code></div>
+                    <div><b>Password</b>:</div><div><code>trust1234</code></div>
+                  </div>
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+
+          <a class="fp-back" href="index.html" aria-label="Back to Hub">← Back</a>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Minimal: trigger the metro entry once the page loads
+    const grid = document.getElementById('grid');
+    window.addEventListener('load', ()=> grid && grid.classList.add('ready'));
+  </script>
+</body>
+</html>
