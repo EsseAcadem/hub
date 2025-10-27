@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -13,30 +12,39 @@
       --shadow:0 14px 30px rgba(0,0,0,.25);
       --gap:12px; --unit: clamp(110px, 12vw, 170px);
     }
+
     *{box-sizing:border-box}
     html,body{ margin:0; color:var(--text); font-family: Calibri, "Segoe UI", -apple-system, system-ui, Roboto, Arial, sans-serif; -webkit-tap-highlight-color: transparent; background: #004050; overflow-x:hidden; }
-    /* subtle Win8 swirl overlay */
     body::after{ display:none; }
 
-    /* Stage centres header+grid as one block */
     .stage{ position:relative; z-index:2; }
-    .block{ width: fit-content; margin: 0 auto; }
+    .block{ width: fit-content; margin: 0 auto; padding-bottom: 48px; }
 
     header{ display:flex; align-items:center; justify-content:flex-start; gap:16px; user-select:none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(24px, 6vh, 100px)); margin:0 0 clamp(40px, 5vh, 88px); }
     .brand img{ height: clamp(90px, 12vw, 160px); width:auto; display:block }
 
     .grid{ display:grid; grid-auto-flow:dense; gap:var(--gap);
       grid-template-columns: repeat(8, var(--unit)); grid-auto-rows: var(--unit);
-      width: fit-content; margin-left:auto; margin-right:auto; justify-content:center; }
-
-    /* Responsive breakpoints keep the block centred and similar scale */
+      width: fit-content; margin-left:auto; margin-right:auto; justify-content:center; margin-bottom:24px; }
     @media (max-width: 1200px){ .grid{ grid-template-columns: repeat(6, var(--unit)); } }
     @media (max-width: 960px){  .grid{ grid-template-columns: repeat(5, var(--unit)); } }
     @media (max-width: 780px){  .grid{ grid-template-columns: repeat(4, var(--unit)); } }
     @media (max-width: 620px){  .grid{ grid-template-columns: repeat(3, var(--unit)); } }
 
-    .tile{ border-radius:4px; box-shadow:var(--shadow); padding:10px; display:flex; flex-direction:column; gap:6px;
-      color:#fff; text-decoration:none; position:relative; overflow:hidden; outline:none; transition: transform .1s ease; }
+    .tile{
+      border-radius:18px; padding:10px; display:flex; flex-direction:column; gap:6px;
+      color:#fff; text-decoration:none; position:relative; overflow:hidden; outline:none;
+      transition: transform .1s ease, box-shadow .2s ease, background .2s ease;
+      
+      /* Frosty glass base */
+      background: rgba(255,255,255,.08);
+      -webkit-backdrop-filter: blur(14px) saturate(120%);
+      backdrop-filter: blur(14px) saturate(120%);
+
+      /* Glassy edge + soft depth */
+      border: 1px solid rgba(255,255,255,.35);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.28);
+    }
     .tile:focus-visible{ outline:3px solid rgba(255,255,255,.6) }
     .tile:active{ transform: scale(.98) }
 
@@ -49,30 +57,103 @@
     .label{ position:absolute; left:12px; bottom:10px; font-weight:400; opacity:.95; font-size:.9rem; margin:0; }
     .icon{ font-size:34px; line-height:1 }
 
-    .time{ background:var(--tile-purple); display:flex; align-items:flex-start; justify-content:space-between; }
+
+
+
+    /* === COLOUR TINTS (FLAT, NO GRADIENT/RADIAL) === */
+
+
+
+
+
+    .time{
+      display:flex; align-items:flex-start; justify-content:space-between;
+      background: color-mix(in srgb, var(--tile-purple) 28%, rgba(255,255,255,.08));
+      border-color: color-mix(in srgb, var(--tile-purple) 40%, transparent);
+    }
+    .time:hover{
+      background: color-mix(in srgb, var(--tile-purple) 34%, rgba(255,255,255,.10));
+      border-color: color-mix(in srgb, var(--tile-purple) 52%, transparent);
+    }
     .time .clock{ font-size:60px; font-weight:800; letter-spacing:.5px; }
     .time .date{ font-size:0px; opacity:.9; }
 
-    .weather{ background:var(--tile-blue); }
+    .weather{
+      background: color-mix(in srgb, var(--tile-blue) 18%, rgba(255,255,255,.08));
+      border-color: color-mix(in srgb, var(--tile-blue) 40%, transparent);
+    }
+    .weather:hover{
+      background: color-mix(in srgb, var(--tile-blue) 24%, rgba(255,255,255,.10));
+      border-color: color-mix(in srgb, var(--tile-blue) 52%, transparent);
+    }
     .weather .temp{ font-size:60px; font-weight:800 }
     .weather .cond{ font-size:16px; opacity:.9 }
     .weather .wrow{ display:flex; align-items:center; gap:12px; }
     .weather .wicon{ width: clamp(36px, 8vw, 86px); height:auto; flex:0 0 auto; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
 
-    .mail{ background:var(--tile-orange); }
-    .calendar{ background:var(--tile-green); }
-    .people{ background:var(--tile-pink); }
-    .photos{ background:var(--tile-cyan); }
+    .mail{
+      background: color-mix(in srgb, var(--tile-orange) 40%, rgba(255,255,255,.08));
+      border-color: color-mix(in srgb, var(--tile-orange) 45%, transparent);
+    }
+    .mail:hover{
+      background: color-mix(in srgb, var(--tile-orange) 44%, rgba(255,255,255,.10));
+      border-color: color-mix(in srgb, var(--tile-orange) 64%, transparent);
+    }
 
-    /* Generic image holder for tile icons (centre a perfect square) */
+    /* datecard keeps its layout; tint comes from .calendar */
+    .datecard{ display:grid; grid-template-columns: 1fr auto; align-items:center; gap:16px; padding:14px 16px 22px; }
+    .datecard .caltext{ display:flex; flex-direction:column; align-items:center; justify-content:center; justify-self:center; }
+    .datecard .calicon{ width:clamp(28px,4vw,36px); height:clamp(28px,4vw,36px); display:grid; place-items:center; align-self:end; justify-self:start; margin-left:6px; margin-bottom:4px; }
+    .datecard .calnum{ font-size: clamp(54px, 7.5vw, 86px); font-weight:400; line-height:1; letter-spacing:.2px; text-align:right; }
+    .datecard .calweekday{ font-size: clamp(14px, 2vw, 18px); opacity:.92; margin-top:6px; text-align:right; }
+    .datecard .label.abs{ display:none; }
+
+    .calendar{
+      background: color-mix(in srgb, var(--tile-green) 18%, rgba(255,255,255,.08));
+      border-color: color-mix(in srgb, var(--tile-green) 40%, transparent);
+    }
+    .calendar:hover{
+      background: color-mix(in srgb, var(--tile-green) 24%, rgba(255,255,255,.10));
+      border-color: color-mix(in srgb, var(--tile-green) 52%, transparent);
+    }
+
+    .people{
+      background: color-mix(in srgb, var(--tile-pink) 28%, rgba(255,255,255,.08));
+      border-color: color-mix(in srgb, var(--tile-pink) 40%, transparent);
+    }
+    .people:hover{
+      background: color-mix(in srgb, var(--tile-pink) 34%, rgba(255,255,255,.10));
+      border-color: color-mix(in srgb, var(--tile-pink) 52%, transparent);
+    }
+
+    /* New 1x1 tile tint (BLUE) */
+    .links{
+      background: color-mix(in srgb, var(--tile-blue) 18%, rgba(255,255,255,.08));
+      border-color: color-mix(in srgb, var(--tile-blue) 40%, transparent);
+    }
+    .links:hover{
+      background: color-mix(in srgb, var(--tile-blue) 24%, rgba(255,255,255,.10));
+      border-color: color-mix(in srgb, var(--tile-blue) 52%, transparent);
+    }
+
+    .photos{
+      background: color-mix(in srgb, var(--tile-cyan) 18%, rgba(255,255,255,.08));
+      border-color: color-mix(in srgb, var(--tile-cyan) 40%, transparent);
+    }
+    .photos:hover{
+      background: color-mix(in srgb, var(--tile-cyan) 24%, rgba(255,255,255,.10));
+      border-color: color-mix(in srgb, var(--tile-cyan) 52%, transparent);
+    }
+
+    /* --- ICON HOLDER (RESTORED) --- */
     .imgbox{
-      position:absolute; inset:8px 8px 36px 8px; /* restore original inset; room for label */
+      position:absolute; inset:8px 8px 36px 8px; /* room for label */
       display:flex; align-items:center; justify-content:center;
     }
     .tileimg{ display:block; width:auto; height:auto; object-fit:contain; }
 
-    /* Slider tile (embedded header slider) */
-    .slider-tile{ padding:0; background:#000; }
+    /* --- SLIDER TILE (ORIGINAL) --- */
+    .slider-tile{ padding:0; } /* leave matte base from .tile; no tint class added */
     .slider-tile .slider{ position:relative; width:100%; height:100%; overflow:hidden; }
     .slider-tile .slide{ position:absolute; inset:0; opacity:0; transform:translateX(2.5%); transition: opacity 900ms ease, transform 900ms ease; }
     .slider-tile .slide.active{ opacity:1; transform:translateX(0); }
@@ -80,13 +161,6 @@
     .slider-tile .logo-overlay{ position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:10; width: min(400px, 50%); }
     @media (max-width: 900px){ .slider-tile .logo-overlay{ width: min(320px, 55%); } }
     @media (max-width: 600px){ .slider-tile .logo-overlay{ width: min(260px, 65%); } }
-
-    /* Date card styles */
-    .datecard{ background: var(--tile-purple); display:grid; grid-template-columns: 1fr auto; align-items:center; gap:16px; padding:14px 16px 22px; } .datecard .caltext{ display:flex; flex-direction:column; align-items:flex-end; justify-content:center; } .datecard .caltext{ display:flex; flex-direction:column; align-items:center; justify-content:center; justify-self:center; }
-    .datecard .calicon{ width:clamp(28px,4vw,36px); height:clamp(28px,4vw,36px); display:grid; place-items:center; align-self:end; justify-self:start; margin-left:6px; margin-bottom:4px; }
-    .datecard .calnum{ font-size: clamp(54px, 7.5vw, 86px); font-weight:400; line-height:1; letter-spacing:.2px; text-align:right; }
-    .datecard .calweekday{ font-size: clamp(14px, 2vw, 18px); opacity:.92; margin-top:6px; text-align:right; }
-    .datecard .label.abs{ display:none; } /* legacy: we now use the default .label */
 
     /* Metro entry */
     .grid .tile{ opacity:0; transform: translateX(12px) skewX(-4deg) }
@@ -100,280 +174,128 @@
     .grid.ready .tile:nth-child(7){ animation-delay:.35s }
     .grid.ready .tile:nth-child(8){ animation-delay:.4s }
     @keyframes enter{ to{ opacity:1; transform:none } }
-  
-/* === Animated background === */
-*{
-  margin:0px;
-  padding:0px;
-  box-sizing: border-box;
-}
 
-body{
-  background: #004050;
-}
+    /* === Animated background === */
+    .animateme {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      overflow: hidden; z-index: 0; pointer-events:none;
+    }
+    .bg-bubbles { position: absolute; inset: 0; z-index: 1; }
+    .bg-bubbles li {
+      position: absolute; list-style: none; display: block;
+      width: 40px; height: 40px; background-color: #353535; bottom: 60px;
+      -webkit-animation: square 25s infinite; animation: square 25s infinite;
+      -webkit-transition-timing-function: linear; transition-timing-function: linear; opacity:0;
+    }
+    .bg-bubbles li:nth-child(1){ left: 3%; border-radius:50em; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(2){ left: 6%; width: 75px; height: 75px; -webkit-animation-delay: 2s; animation-delay: 2s; -webkit-animation-duration: 17s; animation-duration: 17s; }
+    .bg-bubbles li:nth-child(3){ left: 15%; width: 175px; height: 175px; -webkit-animation-delay: 4s; animation-delay: 4s; }
+    .bg-bubbles li:nth-child(4){ left: 40%; width: 90px; height: 90px; -webkit-animation-duration: 22s; animation-duration: 22s; }
+    .bg-bubbles li:nth-child(5){ left: 70%; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(6){ left: 90%; width: 90px; height: 90px; -webkit-animation-delay: 3s; animation-delay: 3s; border-radius:50em; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(7){ left: 32%; width: 60px; height: 60px; -webkit-animation-delay: 7s; animation-delay: 7s; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(8){ left: 55%; width: 50px; height: 50px; -webkit-animation-delay: 15s; animation-delay: 15s; -webkit-animation-duration: 40s; animation-duration: 40s; }
+    .bg-bubbles li:nth-child(9){ left: 30%; width: 140px; height: 140px; -webkit-animation-delay: 2s; animation-delay: 2s; -webkit-animation-duration: 40s; animation-duration: 40s; border-radius:50em; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(10){ left: 90%; width: 60px; height: 60px; -webkit-animation-delay: 11s; animation-delay: 11s; }
+    .bg-bubbles li:nth-child(11){ left: 10%; width: 40px; height: 40px; -webkit-animation-delay: 13s; animation-delay: 13s; border-radius:50em; }
+    .bg-bubbles li:nth-child(12){ left: 55%; width: 175px; height: 175px; -webkit-animation-delay: 7s; animation-delay: 7s; background:transparent; border:4px solid #353535; }
+    .bg-bubbles li:nth-child(13){ left: 65%; width: 100px; height: 100px; -webkit-animation-delay: 8s; animation-delay: 8s; border-radius:50em; }
 
-.animateme {
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	z-index: 0; pointer-events:none;
-}
-
-.bg-bubbles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-.bg-bubbles li {
-  position: absolute;
-  list-style: none;
-  display: block;
-  width: 40px;
-  height: 40px;
-  background-color: #353535;
-  bottom: 60px;
-  -webkit-animation: square 25s infinite;
-  animation: square 25s infinite;
-  -webkit-transition-timing-function: linear;
-  transition-timing-function: linear;
-  opacity:0;
-}
-
-.bg-bubbles li:nth-child(1) {
-  left: 3%;
-  border-radius:50em;
-  background:transparent;
-  border:4px solid #353535;
-}
-.bg-bubbles li:nth-child(2) {
-  left: 6%;
-  width: 75px;
-  height: 75px;
-  -webkit-animation-delay: 2s;
-          animation-delay: 2s;
-  -webkit-animation-duration: 17s;
-          animation-duration: 17s;
-}
-.bg-bubbles li:nth-child(3) {
-  left: 15%;
-  width: 175px;
-  height: 175px;
-  -webkit-animation-delay: 4s;
-          animation-delay: 4s;
-}
-.bg-bubbles li:nth-child(4) {
-  left: 40%;
-  width: 90px;
-  height: 90px;
-  -webkit-animation-duration: 22s;
-          animation-duration: 22s;
-}
-.bg-bubbles li:nth-child(5) {
-  left: 70%;
-  background:transparent;
-  border:4px solid #353535;
-}
-.bg-bubbles li:nth-child(6) {
-  left: 90%;
-  width: 90px;
-  height: 90px;
-  -webkit-animation-delay: 3s;
-          animation-delay: 3s;
-  border-radius:50em;
-  background:transparent;
-  border:4px solid #353535;
-}
-.bg-bubbles li:nth-child(7) {
-  left: 32%;
-  width: 60px;
-  height: 60px;
-  -webkit-animation-delay: 7s;
-          animation-delay: 7s;
-  background:transparent;
-  border:4px solid #353535;
-}
-.bg-bubbles li:nth-child(8) {
-  left: 55%;
-  width: 50px;
-  height: 50px;
-  -webkit-animation-delay: 15s;
-          animation-delay: 15s;
-  -webkit-animation-duration: 40s;
-          animation-duration: 40s;
-}
-.bg-bubbles li:nth-child(9) {
-  left: 30%;
-  width: 140px;
-  height: 140px;
-  -webkit-animation-delay: 2s;
-          animation-delay: 2s;
-  -webkit-animation-duration: 40s;
-          animation-duration: 40s;
-  border-radius:50em;
-  background:transparent;
-  border:4px solid #353535;
-}
-.bg-bubbles li:nth-child(10) {
-  left: 90%;
-  width: 60px;
-  height: 60px;
-  -webkit-animation-delay: 11s;
-          animation-delay: 11s;
-}
-.bg-bubbles li:nth-child(11) {
-  left: 10%;
-  width: 40px;
-  height: 40px;
-  -webkit-animation-delay: 13s;
-          animation-delay: 13s;
-  border-radius:50em;
-}
-.bg-bubbles li:nth-child(12) {
-  left: 55%;
-  width: 175px;
-  height: 175px;
-  -webkit-animation-delay: 7s;
-          animation-delay: 7s;
-  background:transparent;
-  border:4px solid #353535;
-}
-
-.bg-bubbles li:nth-child(13) {
-  left: 65%;
-  width: 100px;
-  height: 100px;
-  -webkit-animation-delay: 8s;
-          animation-delay: 8s;
-  border-radius:50em;
-}
-
-@-webkit-keyframes square {
-  0% {
-    -webkit-transform: translateY(0);
-            transform: translateY(0);
-    opacity:0;
-  }
-  50% {
-    opacity:1;
-  }
-  100% {
-    -webkit-transform: translateY(-700px) rotate(600deg);
-            transform: translateY(-700px) rotate(600deg);
-    opacity:1;
-  }
-}
-@keyframes square {
-  0% {
-    -webkit-transform: translateY(0);
-            transform: translateY(0);
-    opacity:0;
-  }
-  50% {
-    opacity:1;
-  }
-  100% {
-    -webkit-transform: translateY(-700px) rotate(600deg);
-            transform: translateY(-700px) rotate(600deg);
-    opacity:0;
-  }
-}
-</style>
+    @-webkit-keyframes square {
+      0% { -webkit-transform: translateY(0); transform: translateY(0); opacity:0; }
+      50% { opacity:1; }
+      100% { -webkit-transform: translateY(-700px) rotate(600deg); transform: translateY(-700px) rotate(600deg); opacity:1; }
+    }
+    @keyframes square {
+      0% { transform: translateY(0); opacity:0; }
+      50% { opacity:1; }
+      100% { transform: translateY(-700px) rotate(600deg); opacity:0; }
+    }
+  </style>
 </head>
 <body>
-<div class="animateme">
-  <ul class="bg-bubbles">
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-  </ul>
-</div>
+  <div class="animateme">
+    <ul class="bg-bubbles">
+      <li></li><li></li><li></li><li></li><li></li><li></li>
+      <li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+    </ul>
+  </div>
+
   <div class="stage">
     <div class="block">
-    <header>
-      <div class="brand">
-        <img src="academy-logo.png" alt="Essentia Academy"/>
-      </div>
-    </header>
-
-    <main class="grid" id="grid">
-      <!-- Time (London) -->
-      <a class="tile time size-2x2" href="#" aria-label="Current time in London">
-        <div>
-          <div class="clock" id="clock">—:—</div>
-          <div class="date" id="date">Loading…</div>
+      <header>
+        <div class="brand">
+          <a href="index.html"><img src="academy-logo.png" alt="Essentia Academy" /></a>
         </div>
-        <div class="label">London</div>
-      </a>
+      </header>
 
-      <!-- Weather (London) -->
-      <a class="tile weather size-4x1" href="#" aria-label="Weather in London">
-        <div class="wrow" id="wrow">
+      <main class="grid" id="grid">
+        <!-- Time (London) -->
+        <a class="tile time size-2x2" href="#" aria-label="Current time in London">
           <div>
-            <div class="temp" id="w-temp">--°C</div>
-            <div class="cond" id="w-cond">Loading weather…</div>
+            <div class="clock" id="clock">—:—</div>
+            <div class="date" id="date">Loading…</div>
           </div>
-        </div>
-        <div class="label">Weather</div>
-      </a>
+          <div class="label">London</div>
+        </a>
 
-      <!-- Slider tile (Hub header slider) -->
-      <a class="tile slider-tile size-4x2" href="#" aria-label="Hub Slider">
-        <div class="slider" id="hubSlider">
-          <div class="slide active"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/GDS.jpg" alt="" /></div>
-          <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/GUY.jpg" alt="" /></div>
-          <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/HAR.png" alt="" /></div>
-          <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/RBH.jpg" alt="" /></div>
-          <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/STH.jpg" alt="" /></div>
+        <!-- Weather (London) -->
+        <a class="tile weather size-4x1" href="#" aria-label="Weather in London">
+          <div class="wrow" id="wrow">
+            <div>
+              <div class="temp" id="w-temp">--°C</div>
+              <div class="cond" id="w-cond">Loading weather…</div>
+            </div>
+          </div>
+          <div class="label">Weather</div>
+        </a>
 
-        </div>
-      </a>
+        <!-- Slider tile (original) -->
+        <a class="tile slider-tile size-4x2" href="#" aria-label="Hub Slider">
+          <div class="slider" id="hubSlider">
+            <div class="slide active"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/GDS.jpg" alt="" /></div>
+            <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/GUY.jpg" alt="" /></div>
+            <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/HAR.png" alt="" /></div>
+            <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/RBH.jpg" alt="" /></div>
+            <div class="slide"><img src="https://raw.githubusercontent.com/EsseAcadem/hub/073f232bde5dc709251fcfc26714ff301b0b2385/STH.jpg" alt="" /></div>
+          </div>
+        </a>
 
-      <!-- Mock tiles -->
-      <a class="tile mail size-2x1" href="https://nhs.sharepoint.com/sites/msteams_ac6500/_layouts/15/listforms.aspx?cid=YTAzYzRjNmItNTI3MS00ZWIwLWIxMjAtY2IxY2E5NWE3N2Fl&nav=ZDM3MjdjNGItNzQ0Ni00OTM0LTgwMjMtOWYxNzQzODI5MDRj" target="_blank" rel="noopener noreferrer" aria-label="Mail">
-        <div class="imgbox"><img class="tileimg" src="LearnDesk.png" alt="Mail"/></div>
-        <div class="label">Engineering LearnDesk</div>
-      </a>
+        <!-- Book training -->
+        <a class="tile mail size-2x1" href="training.html" rel="noopener noreferrer" aria-label="Engineering Training">
+          <div class="imgbox"><img class="tileimg" src="LearnDesk.png" alt="Book training"/></div>
+          <div class="label">Engineering Training</div>
+        </a>
 
-      <a class="tile datecard size-2x1" href="#" aria-label="Calendar">
-        <div class="calicon" aria-hidden="true">
-          
-            
- 
-        </div>
-        <div class="caltext">
-          <div id="cal-num" class="calnum">12</div>
-          <div id="cal-weekday" class="calweekday">Monday</div>
-        </div>
-        <div class="label">Date</div>
-      </a>
+        <!-- Date (Calendar) -->
+        <a class="tile calendar datecard size-2x1" href="#" aria-label="Calendar">
+          <div class="calicon" aria-hidden="true"></div>
+          <div class="caltext">
+            <div id="cal-num" class="calnum">12</div>
+            <div id="cal-weekday" class="calweekday">Monday</div>
+          </div>
+          <div class="label">Date</div>
+        </a>
 
-      <a class="tile people size-1x1" href="#" aria-label="People">
-        <div class="imgbox"><img class="tileimg" src="ppl2.png" alt="People"/></div>
-        <div class="label">Your Well-being</div>
-      </a>
+        <!-- Well-being -->
+        <a class="tile people size-1x1" href="wellbeing.html" aria-label="Your well-being">
+          <div class="imgbox"><img class="tileimg" src="ppl2.png" alt="People"/></div>
+          <div class="label">Your Well-being</div>
+        </a>
 
-      <a class="tile photos size-2x1" href="http://essentiaacademy.short.gy/coh" target="_blank" rel="noopener noreferrer" aria-label="Photos">
-        <div class="imgbox"><img class="tileimg" src="ppl.png" alt="Photos"/></div>
-        <div class="label">Essentia COH Training</div>
-      </a>
-    </main>
-  </div>
+        <!-- New 1x1 tile next to Well-being -->
+        <a class="tile links size-1x1" href="http://essentiaacademy.short.gy/coh" target="_blank" rel="noopener noreferrer" aria-label="Essentia COH Training" aria-label="Quick Links">
+          <div class="imgbox"><img class="tileimg" src="ppl.png" alt="Links"/></div>
+          <div class="label">Essentia COH Training</div>
+        </a>
+
+        <!-- COH Training -->
+        <a class="tile photos size-2x1" href="http://essentiaacademy.short.gy/coh" target="_blank" rel="noopener noreferrer" aria-label="Essentia COH Training">
+          <div class="imgbox"><img class="tileimg" src="soft.png" alt="COH"/></div>
+          <div class="label">Soft Skills Training</div>
+        </a>
+      </main>
+    </div>
   </div>
 
   <script>
@@ -401,7 +323,7 @@ body{
     updateClock();
     setInterval(updateClock, 15000);
 
-    // Weather (London) via Open‑Meteo
+    // Weather (London) via Open-Meteo
     async function loadWeather(){
       try{
         const url = 'https://api.open-meteo.com/v1/forecast?latitude=51.5072&longitude=-0.1276&current_weather=true&timezone=Europe%2FLondon';
@@ -424,7 +346,6 @@ body{
           if([95,96,99].includes(code)) return 'thunderstorms';
           return isDay ? 'overcast-day' : 'overcast-night';
         }
-        // Insert animated icon dynamically (no placeholder). If it takes too long, skip.
         const row = document.getElementById('wrow');
         if(row){
           const altText = codeMap[cw.weathercode] || 'Weather';
@@ -444,30 +365,13 @@ body{
             'thunderstorms': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/thunderstorms.svg'
           };
           const bases = [
-            // Fast static fallback first (if override fails)
             'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/',
-            // Animated set (can be slower, keep as later options)
             'https://cdn.jsdelivr.net/gh/basmilius/weather-icons@latest/animated/',
             'https://cdn.statically.io/gh/basmilius/weather-icons/main/animated/',
             'https://raw.githubusercontent.com/basmilius/weather-icons/main/animated/'
           ];
           let settled = false; let timer;
-
-          // If we have an override for this icon, try it first
           const name = iconFor(cw.weathercode);
-          function loadOverrideThenBases(){
-            if (overrides[name]){
-              const first = overrides[name];
-              img.onerror = ()=>{ // fallback to bases
-                tryBases(0);
-              };
-              img.onload  = ()=>{ settled = true; if(timer) clearTimeout(timer); };
-              img.src = first;
-              // if slow, move on to bases quickly
-              timer = setTimeout(()=>{ if(!settled) tryBases(0); }, 400);
-            } else { tryBases(0); }
-          }
-
           function tryBases(i){
             if (settled || i >= bases.length) return;
             const url = bases[i] + name + '.svg';
@@ -476,18 +380,24 @@ body{
             img.src = url;
             timer = setTimeout(()=>{ if(!settled) tryBases(i+1); }, 500);
           }
-
-          loadOverrideThenBases();
+          if (overrides[name]){
+            img.onerror = ()=>{ tryBases(0); };
+            img.onload  = ()=>{ settled = true; if(timer) clearTimeout(timer); };
+            img.src = overrides[name];
+            timer = setTimeout(()=>{ if(!settled) tryBases(0); }, 400);
+          } else {
+            tryBases(0);
+          }
         }
       }catch(e){ document.getElementById('w-cond').textContent = 'Weather unavailable'; }
     }
     loadWeather();
 
-    // --- Ensure tile images render as a centred square that fits the tile ---
+    // --- ICON SIZING (unchanged) ---
     function sizeTileImages(){
       document.querySelectorAll('.imgbox').forEach(box=>{
         const r = box.getBoundingClientRect();
-        const side = Math.floor(Math.min(r.width, r.height)); // scale up icons
+        const side = Math.floor(Math.min(r.width, r.height));
         const img = box.querySelector('.tileimg');
         if(img){ img.style.width = side + 'px'; img.style.height = side + 'px'; }
       });
@@ -496,7 +406,7 @@ body{
     window.addEventListener('resize', sizeTileImages);
     new ResizeObserver(sizeTileImages).observe(document.body);
 
-    // Slider tile rotation
+    // Slider rotation (unchanged)
     (function(){
       const slider = document.getElementById('hubSlider');
       if(!slider) return;
