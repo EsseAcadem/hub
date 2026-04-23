@@ -57,14 +57,7 @@
     .label{ position:absolute; left:12px; bottom:10px; font-weight:400; opacity:.95; font-size:.9rem; margin:0; }
     .icon{ font-size:34px; line-height:1 }
 
-
-
-
     /* === COLOUR TINTS (FLAT, NO GRADIENT/RADIAL) === */
-
-
-
-
 
     .time{
       display:flex; align-items:flex-start; justify-content:space-between;
@@ -335,6 +328,7 @@
         document.getElementById('w-temp').textContent = Math.round(cw.temperature) + '°C';
         document.getElementById('w-cond').textContent = codeMap[cw.weathercode] || '';
         const isDay = (cw.is_day === 1);
+        
         function iconFor(code){
           if([0,1].includes(code)) return isDay ? 'clear-day' : 'clear-night';
           if(code===2) return isDay ? 'partly-cloudy-day' : 'partly-cloudy-night';
@@ -346,50 +340,66 @@
           if([95,96,99].includes(code)) return 'thunderstorms';
           return isDay ? 'overcast-day' : 'overcast-night';
         }
+        
         const row = document.getElementById('wrow');
         if(row){
           const altText = codeMap[cw.weathercode] || 'Weather';
           let img = document.getElementById('w-icon');
-          if(!img){ img = document.createElement('img'); img.id='w-icon'; img.className='wicon'; img.alt = altText; row.prepend(img); }
-          const overrides = {
-            'clear-day': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/clear-day.svg',
-            'clear-night': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/clear-night.svg',
-            'partly-cloudy-day': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-day.svg',
-            'partly-cloudy-night': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/partly-cloudy-night.svg',
-            'overcast-day': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/overcast-day.svg',
-            'overcast-night': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/overcast-night.svg',
-            'fog': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/fog.svg',
-            'drizzle': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/drizzle.svg',
-            'rain': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/rain.svg',
-            'snow': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/snow.svg',
-            'thunderstorms': 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/thunderstorms.svg'
-          };
-          const bases = [
-            'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/',
-            'https://cdn.jsdelivr.net/gh/basmilius/weather-icons@latest/animated/',
-            'https://cdn.statically.io/gh/basmilius/weather-icons/main/animated/',
-            'https://raw.githubusercontent.com/basmilius/weather-icons/main/animated/'
-          ];
-          let settled = false; let timer;
+          
+          if(!img){ 
+              img = document.createElement('img'); 
+              img.id='w-icon'; 
+              img.className='wicon'; 
+              img.alt = altText; 
+              row.prepend(img); 
+          }
+          
           const name = iconFor(cw.weathercode);
-          function tryBases(i){
-            if (settled || i >= bases.length) return;
-            const url = bases[i] + name + '.svg';
-            img.onerror = ()=>{ if(!settled) tryBases(i+1); };
-            img.onload  = ()=>{ settled = true; if(timer) clearTimeout(timer); };
-            img.src = url;
-            timer = setTimeout(()=>{ if(!settled) tryBases(i+1); }, 500);
-          }
-          if (overrides[name]){
-            img.onerror = ()=>{ tryBases(0); };
-            img.onload  = ()=>{ settled = true; if(timer) clearTimeout(timer); };
-            img.src = overrides[name];
-            timer = setTimeout(()=>{ if(!settled) tryBases(0); }, 400);
-          } else {
-            tryBases(0);
-          }
+          
+          // OpenWeatherMap static fallback codes just in case all animated SVGs fail
+          const owmCode = {
+              'clear-day': '01d', 'clear-night': '01n',
+              'partly-cloudy-day': '02d', 'partly-cloudy-night': '02n',
+              'overcast-day': '04d', 'overcast-night': '04n',
+              'fog': '50d', 'drizzle': '09d', 'rain': '10d', 'snow': '13d', 'thunderstorms': '11d'
+          }[name] || '03d';
+          
+          // A list of full image paths to try sequentially (animated first, static OWM last)
+          const sources = [
+            `https://cdn.jsdelivr.net/gh/basmilius/weather-icons/design/fill/animation/${name}.svg`,
+            `https://cdn.jsdelivr.net/gh/basmilius/weather-icons/production/fill/all/${name}.svg`,
+            `https://cdn.jsdelivr.net/gh/marella/meteocons/svg/all/${name}.svg`,
+            `https://openweathermap.org/img/wn/${owmCode}@2x.png`
+          ];
+          
+          let currentSrc = 0;
+          
+          // Fade in the image when it successfully loads
+          img.onload = () => {
+              img.style.opacity = '1';
+          };
+          
+          // If a link fails, try the next one in the list
+          img.onerror = () => {
+              currentSrc++;
+              if (currentSrc < sources.length) {
+                  img.src = sources[currentSrc];
+              } else {
+                  img.style.display = 'none'; // Hide if absolutely everything fails
+              }
+          };
+          
+          // Hide it at first to avoid showing a broken image icon
+          img.style.opacity = '0';
+          img.style.transition = 'opacity 0.5s ease';
+          
+          // Start downloading the first icon
+          img.src = sources[0];
         }
-      }catch(e){ document.getElementById('w-cond').textContent = 'Weather unavailable'; }
+      }catch(e){ 
+          const condEl = document.getElementById('w-cond');
+          if (condEl) condEl.textContent = 'Weather unavailable'; 
+      }
     }
     loadWeather();
 
